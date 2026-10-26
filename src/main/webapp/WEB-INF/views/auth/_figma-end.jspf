@@ -1,0 +1,6 @@
+<%@ page pageEncoding="UTF-8" %>
+<c:if test="${viewMode ne 'auth'}">
+    <%@ include file="../common/footer.jsp" %>
+</c:if>
+</body>
+</html>

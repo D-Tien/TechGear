@@ -29,11 +29,9 @@ src/main/java/com/techgear/controller/admin/OrderManagementServlet.java
 src/main/java/com/techgear/controller/admin/ProductManagementServlet.java
 src/main/java/com/techgear/controller/admin/UserManagementServlet.java
 src/main/java/com/techgear/controller/auth/ChangePasswordServlet.java
-src/main/java/com/techgear/controller/auth/ForgotPasswordServlet.java
 src/main/java/com/techgear/controller/auth/LoginServlet.java
 src/main/java/com/techgear/controller/auth/LogoutServlet.java
 src/main/java/com/techgear/controller/auth/RegisterServlet.java
-src/main/java/com/techgear/controller/auth/ResetPasswordServlet.java
 src/main/java/com/techgear/controller/cart/CartServlet.java
 src/main/java/com/techgear/controller/cart/CheckoutServlet.java
 src/main/java/com/techgear/controller/product/HomeServlet.java
@@ -76,10 +74,8 @@ src/main/webapp/WEB-INF/views/admin/product-form.jsp
 src/main/webapp/WEB-INF/views/admin/products.jsp
 src/main/webapp/WEB-INF/views/admin/users.jsp
 src/main/webapp/WEB-INF/views/auth/change-password.jsp
-src/main/webapp/WEB-INF/views/auth/forgot-password.jsp
 src/main/webapp/WEB-INF/views/auth/login.jsp
 src/main/webapp/WEB-INF/views/auth/register.jsp
-src/main/webapp/WEB-INF/views/auth/reset-password.jsp
 src/main/webapp/WEB-INF/views/cart/cart.jsp
 src/main/webapp/WEB-INF/views/cart/checkout.jsp
 src/main/webapp/WEB-INF/views/common/footer.jsp

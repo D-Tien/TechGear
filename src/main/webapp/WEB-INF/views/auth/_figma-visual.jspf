@@ -1,0 +1,9 @@
+<%@ page pageEncoding="UTF-8" %>
+<aside class="tg-auth-visual" aria-label="TechGear">
+    <a class="tg-logo tg-logo-light" href="<c:url value='/home'/>"><i aria-hidden="true">T</i><span>Tech<strong>Gear</strong></span></a>
+    <div class="tg-visual-copy">
+        <span class="tg-eyebrow">THIẾT BỊ TỐT HƠN · MỖI NGÀY</span>
+        <h2>Công nghệ<br>đúng chất bạn.</h2>
+        <p>Hàng chính hãng. Giao nhanh. Hỗ trợ tận tâm.</p>
+    </div>
+</aside>
