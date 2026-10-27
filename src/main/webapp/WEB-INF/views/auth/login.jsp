@@ -6,6 +6,7 @@
 <%@ include file="_figma-start.jspf" %>
 <main class="tg-auth-page tg-account-login" id="tg-main">
     <%@ include file="_figma-visual.jspf" %>
+    <a class="tg-auth-swap" href="<c:url value='/home'/>" aria-label="Về trang chủ" title="Về trang chủ"><span aria-hidden="true">‹</span></a>
     <section class="tg-auth-card-wrap" aria-labelledby="tg-page-title">
       <div class="tg-auth-card">
         <div class="tg-auth-heading">

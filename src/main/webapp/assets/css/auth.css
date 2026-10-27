@@ -59,40 +59,42 @@ body.tg-person1 {
 .tg-person1 .tg-notice { padding: 13px 16px; border-radius: 9px; background: var(--tg-bg); border: 1px solid var(--tg-line); font-size: 13px; line-height: 1.6; overflow-wrap: anywhere; }
 .tg-person1 .tg-notice-error { color: #a32936; border-color: #fac9ce; background: #fff1f2; }
 .tg-person1 .tg-notice-success { color: #087b4d; border-color: #bfe8d2; background: #ecfaf3; }
-/* Account forms from the updated Figma Make design. */
-body.tg-view-auth { min-height: 100vh; min-height: 100dvh; background: #1476c3; padding: 0; }
-.tg-view-auth .tg-auth-page { width: 100%; min-height: 100vh; min-height: 100dvh; border-radius: 0; overflow: hidden; display: grid; grid-template-columns: 54% 46%; background: linear-gradient(145deg, #287ed0, #0069b5); position: relative; }
-.tg-view-auth .tg-auth-page::before, .tg-view-auth .tg-auth-page::after { content: ""; position: absolute; border-radius: 50%; background: rgb(255 255 255 / 5.5%); pointer-events: none; }
-.tg-view-auth .tg-auth-page::before { width: 560px; height: 560px; left: -230px; bottom: -300px; }
-.tg-view-auth .tg-auth-page::after { width: 430px; height: 430px; right: -190px; top: -230px; }
-.tg-view-auth .tg-auth-visual { padding: 52px 68px; color: #fff; display: flex; flex-direction: column; justify-content: space-between; gap: 56px; position: relative; z-index: 1; min-width: 0; }
+/* Account forms: updated Figma layout, scoped to authentication pages. */
+body.tg-view-auth { min-height: 100vh; min-height: 100dvh; background: linear-gradient(135deg, #c4eff8 0%, #d9e7ff 48%, #c7d8ff 100%); padding: 0; }
+.tg-view-auth .tg-auth-page { width: 100%; min-height: 100vh; min-height: 100dvh; display: grid; grid-template-columns: 47% 53%; background: #fff; overflow: hidden; position: relative; isolation: isolate; }
+.tg-view-auth .tg-auth-page::before, .tg-view-auth .tg-auth-page::after { content: ""; position: absolute; border-radius: 50%; pointer-events: none; z-index: -1; }
+.tg-view-auth .tg-auth-page::before { width: 360px; height: 360px; left: -180px; bottom: -190px; background: rgb(21 93 252 / 14%); }
+.tg-view-auth .tg-auth-page::after { width: 300px; height: 300px; right: -140px; top: -170px; background: rgb(57 139 255 / 10%); }
+.tg-view-auth .tg-auth-visual { background: linear-gradient(150deg, #17274f 0%, #243d75 62%, #155dfc 135%); clip-path: polygon(0 0, 84% 0, 100% 50%, 84% 100%, 0 100%); padding: 55px 88px 55px 58px; color: #fff; display: flex; flex-direction: column; align-items: flex-start; text-align: left; justify-content: space-between; gap: 44px; position: relative; min-width: 0; }
 .tg-view-auth .tg-logo-light { color: #fff; }
-.tg-view-auth .tg-logo { max-width: 100%; }
+.tg-view-auth .tg-logo { max-width: 100%; flex-shrink: 0; }
 .tg-view-auth .tg-brand-image { display: block; width: clamp(160px, 18vw, 240px); max-width: 100%; height: auto; object-fit: contain; }
-.tg-view-auth .tg-logo-light i { background: #fff; color: #1477c4; }
-.tg-view-auth .tg-logo-light strong { color: #fff; }
-.tg-view-auth .tg-visual-copy .tg-eyebrow { color: #fff; font-size: 14px; font-weight: 800; letter-spacing: 4px; margin-bottom: 18px; }
-.tg-view-auth .tg-visual-copy h2 { font-size: 54px; line-height: 1.08; letter-spacing: -2px; font-weight: 700; margin: 18px 0; }
-.tg-view-auth .tg-visual-copy p { max-width: 430px; font-size: 15px; line-height: 1.8; color: #d8edff; margin: 0; }
-.tg-view-auth .tg-welcome-line { width: 72px; height: 3px; background: rgb(255 255 255 / 45%); margin-top: 28px; border-radius: 3px; }
-.tg-view-auth .tg-welcome-footer { font-size: 10px; letter-spacing: 1.5px; color: #c7e5ff; line-height: 1.8; }
-.tg-view-auth .tg-auth-card-wrap { display: grid; place-items: center; padding: 44px 56px; position: relative; z-index: 1; min-width: 0; }
-.tg-view-auth .tg-auth-card { width: 100%; max-width: 480px; min-width: 0; background: #fff; border-radius: 12px; padding: 42px 40px; box-shadow: 0 20px 50px rgb(0 43 85 / 22%); }
-.tg-view-auth .tg-login-kicker { font-size: 10px; letter-spacing: 1.8px; font-weight: 800; color: var(--tg-blue); }
-.tg-view-auth .tg-auth-heading h1 { font-size: 34px; margin: 9px 0 7px; letter-spacing: -1.2px; }
+.tg-view-auth .tg-visual-copy { margin: auto 0; }
+.tg-view-auth .tg-visual-copy .tg-eyebrow { color: #a9c6ff; font-size: 11px; font-weight: 800; letter-spacing: 3px; margin-bottom: 17px; }
+.tg-view-auth .tg-visual-copy h2 { font-size: 43px; line-height: 1.08; letter-spacing: -1.5px; font-weight: 700; margin: 17px 0; }
+.tg-view-auth .tg-visual-copy p { max-width: 330px; font-size: 13px; line-height: 1.7; color: #cbd9f2; margin: 0; }
+.tg-view-auth .tg-welcome-line { width: 46px; height: 4px; background: #3d8cff; margin-top: 28px; border-radius: 5px; }
+.tg-view-auth .tg-welcome-footer { font-size: 9px; letter-spacing: 1.5px; color: #90a8d2; line-height: 1.8; }
+.tg-view-auth .tg-auth-swap { position: absolute; z-index: 5; left: 47%; top: 50%; transform: translate(-50%, -50%); display: grid; place-items: center; width: 66px; height: 66px; border-radius: 50%; border: 8px solid rgb(255 255 255 / 22%); background: #1d6ef0; background-clip: padding-box; color: #fff; font-size: 42px; line-height: 1; box-shadow: 0 12px 26px rgb(12 48 112 / 30%); text-decoration: none; }
+.tg-view-auth .tg-auth-swap span { display: block; margin-top: -4px; }
+.tg-view-auth .tg-auth-swap:hover { background-color: #155dfc; text-decoration: none; }
+.tg-view-auth .tg-auth-card-wrap { display: grid; place-items: center; padding: 44px 68px 44px 44px; background: #fff; min-width: 0; }
+.tg-view-auth .tg-auth-card { width: 100%; max-width: 390px; min-width: 0; background: #fff; padding: 22px 16px; }
+.tg-view-auth .tg-login-kicker { font-size: 10px; letter-spacing: 1.8px; font-weight: 800; color: #407ce8; }
+.tg-view-auth .tg-auth-heading h1 { font-size: 38px; color: #162448; margin: 9px 0 7px; letter-spacing: -1.2px; }
 .tg-view-auth .tg-auth-heading > p { color: var(--tg-muted); margin: 0 0 28px; line-height: 1.6; }
-.tg-view-auth .tg-auth-card > .tg-back { color: var(--tg-muted); font-size: 11px; font-weight: 700; margin-bottom: 22px; }
+.tg-view-auth .tg-auth-card > .tg-back { color: #6680aa; font-size: 11px; font-weight: 700; margin-bottom: 22px; }
 .tg-view-auth .tg-auth-card > .tg-notice { margin-bottom: 18px; }
 .tg-view-auth .tg-form { gap: 17px; }
 .tg-view-auth .tg-field { gap: 8px; font-size: 12px; }
 .tg-view-auth .tg-field > label { font-weight: 700; }
-.tg-view-auth .tg-field input { min-height: 50px; padding: 0 15px; border-color: #dbe1e9; border-radius: 6px; background: #fbfcfe; font-size: 12px; }
+.tg-view-auth .tg-field input { min-height: 50px; padding: 0 18px; border-color: #bec8d8; border-radius: 999px; background: #fff; font-size: 12px; }
 .tg-view-auth .tg-field input::placeholder { color: #94a3b8; }
-.tg-view-auth .tg-password-field input { padding-right: 58px; }
-.tg-view-auth .tg-password-toggle { font-size: 11px; color: #475569; }
-.tg-view-auth .tg-form > .tg-button { width: 100%; min-height: 50px; margin: 5px 0 0; background: linear-gradient(90deg, #1679c8, #006cad); border: 0; border-radius: 6px; font-size: 15px; }
+.tg-view-auth .tg-password-field input { padding-right: 65px; }
+.tg-view-auth .tg-password-toggle { padding: 0 12px; min-height: 40px; color: #38536b; font-size: 10px; font-weight: 800; text-transform: uppercase; }
+.tg-view-auth .tg-form > .tg-button { width: 100%; min-height: 50px; margin: 5px 0 0; border-radius: 999px; background: linear-gradient(90deg, #246fe5, #155dfc, #2d88ee); border: 0; box-shadow: 0 10px 24px rgb(21 93 252 / 20%); font-size: 15px; }
 .tg-view-auth .tg-login-divider { height: 1px; background: var(--tg-line); margin: 28px 0 22px; text-align: center; }
-.tg-view-auth .tg-login-divider span { position: relative; top: -11px; background: #fff; padding: 0 10px; color: #94a3b8; font-size: 10px; }
+.tg-view-auth .tg-login-divider span { position: relative; top: -11px; background: #fff; padding: 0 10px; color: #7c8ba4; font-size: 10px; }
 .tg-view-auth .tg-auth-switch { margin: 22px 0 0; text-align: center; font-size: 12px; color: var(--tg-muted); line-height: 1.7; }
 .tg-view-auth .tg-login-divider + .tg-auth-switch { margin-top: 0; }
 .tg-view-auth .tg-auth-switch a { font-weight: 700; }
@@ -100,12 +102,10 @@ body.tg-view-auth { min-height: 100vh; min-height: 100dvh; background: #1476c3; 
 .tg-view-auth .tg-register-fields input { min-height: 48px; }
 .tg-view-auth .tg-hint { font-size: 10px; }
 .tg-view-auth .tg-optional { font-size: 10px; }
-.tg-view-auth .tg-password-note { display: flex; flex-direction: column; gap: 3px; background: #f3f7ff; border-radius: 9px; padding: 11px 13px; color: var(--tg-muted); font-size: 10px; }
+.tg-view-auth .tg-password-note { display: flex; flex-direction: column; gap: 3px; background: #edf4ff; border-radius: 9px; padding: 11px 13px; color: #607395; font-size: 10px; }
 .tg-view-auth .tg-password-note b { color: #334155; }
-.tg-view-auth .tg-account-register { min-height: 100vh; min-height: 100dvh; }
+.tg-view-auth .tg-account-register .tg-auth-card { max-width: 430px; padding-block: 28px; }
 .tg-view-auth .tg-account-register .tg-auth-card-wrap { padding-block: 28px; }
-.tg-view-auth .tg-account-register .tg-auth-card { padding-block: 28px; }
-.tg-view-auth .tg-account-password { min-height: 100vh; min-height: 100dvh; }
 .tg-person1 .tg-container { max-width: 1240px; margin: auto; padding: 36px 24px 88px; }
 .tg-person1 .tg-page-title { margin: 20px 0 32px; }
 .tg-person1 .tg-page-title h1 { margin: 0; }
@@ -196,27 +196,31 @@ body.tg-view-admin { min-height: 100vh; background: #f5f7fb; }
 }
 
 @media (max-width: 1100px) and (min-width: 801px) {
-    .tg-view-auth .tg-auth-visual { padding: 44px 40px; }
-    .tg-view-auth .tg-visual-copy h2 { font-size: 46px; }
-    .tg-view-auth .tg-auth-card-wrap { padding: 32px 24px; }
-    .tg-view-auth .tg-auth-card { padding-inline: 28px; }
+    .tg-view-auth .tg-auth-visual { padding: 44px 74px 44px 36px; }
+    .tg-view-auth .tg-visual-copy h2 { font-size: 38px; }
+    .tg-view-auth .tg-auth-card-wrap { padding: 32px 24px 32px 36px; }
+    .tg-view-auth .tg-auth-card { padding-inline: 12px; }
+    .tg-view-auth .tg-welcome-footer { max-width: 220px; }
 }
 @media (max-width: 800px) {
-    body.tg-view-auth { padding: 0; }
-    .tg-view-auth .tg-auth-page { grid-template-columns: 1fr; min-height: 100vh; min-height: 100dvh; }
-    .tg-view-auth .tg-auth-visual { padding: 30px 28px 12px; gap: 42px; }
-    .tg-view-auth .tg-visual-copy h2 { font-size: 40px; }
+    .tg-view-auth .tg-auth-page { grid-template-columns: 1fr; overflow: hidden; }
+    .tg-view-auth .tg-auth-visual { clip-path: none; padding: 30px 28px 54px; align-items: center; text-align: center; gap: 30px; }
+    .tg-view-auth .tg-visual-copy { margin: 0; }
+    .tg-view-auth .tg-visual-copy h2 { font-size: 34px; }
+    .tg-view-auth .tg-visual-copy p { max-width: 420px; }
+    .tg-view-auth .tg-welcome-line { margin-inline: auto; }
     .tg-view-auth .tg-welcome-footer { display: none; }
-    .tg-view-auth .tg-auth-card-wrap { padding: 20px; }
-    .tg-view-auth .tg-auth-card { padding: 32px 24px; }
+    .tg-view-auth .tg-auth-swap { left: 50%; top: 0; position: relative; margin-block: -29px; transform: translateX(-50%) rotate(-90deg); width: 58px; height: 58px; }
+    .tg-view-auth .tg-auth-card-wrap { padding: 52px 24px 28px; }
+    .tg-view-auth .tg-auth-card { max-width: 470px; padding: 22px 16px; }
+    .tg-view-auth .tg-account-register .tg-auth-card-wrap { padding-top: 52px; }
 }
 @media (max-width: 520px) {
     .tg-view-auth .tg-register-fields { grid-template-columns: 1fr; }
-    .tg-view-auth .tg-auth-heading h1 { font-size: 30px; }
+    .tg-view-auth .tg-auth-heading h1 { font-size: 32px; }
     .tg-view-auth .tg-auth-visual { padding-inline: 24px; }
     .tg-view-auth .tg-visual-copy .tg-eyebrow { font-size: 11px; letter-spacing: 2.5px; }
-    .tg-view-auth .tg-visual-copy h2 { font-size: 36px; }
     .tg-view-auth .tg-visual-copy p { font-size: 13px; }
-    .tg-view-auth .tg-auth-card-wrap { padding: 16px; }
-    .tg-view-auth .tg-auth-card { padding-inline: 22px; }
+    .tg-view-auth .tg-auth-card-wrap { padding-inline: 20px; }
+    .tg-view-auth .tg-auth-card { padding-inline: 8px; }
 }
