@@ -9,7 +9,7 @@
 -- Image URLs are PUBLIC WEB PHOTOS illustrative by CATEGORY, not verified product-specific photos.
 -- External image hosts may change/block URLs or require internet. Replace with licensed local assets
 -- or verified manufacturer images before publication. No image bytes are stored in SQL Server.
--- No demo admin credentials, no real customer information and no plaintext passwords.
+-- Includes 6 local demo accounts with BCrypt password hashes; no real customer information.
 
 USE [master];
 GO
@@ -123,6 +123,26 @@ BEGIN TRY
     CREATE INDEX IX_ResetTokens_user ON dbo.PasswordResetTokens(userId);
 
     INSERT INTO dbo.Roles(roleName) VALUES (N'ADMIN'),(N'CUSTOMER');
+
+    -- DEMO LOGIN ACCOUNTS (LOCAL ONLY; NEVER DEPLOY WITH THESE PASSWORDS)
+    -- admin / Admin@123456 (ADMIN)
+    -- customer1..customer5 / User@123456 (CUSTOMER)
+    -- BCrypt hashes use $2a$ prefix, cost 10 (compatible with most Java BCrypt libraries).
+    -- Change/remove demo credentials before exposing application outside local development.
+    INSERT INTO dbo.Users(username,fullName,email,roleId,passwordHash)
+    SELECT v.username,v.fullName,v.email,r.roleId,v.passwordHash
+    FROM (VALUES
+        (N'admin',N'TechGear Admin',N'admin@techgear.local',N'ADMIN',N'$2a$10$tuKpGQ6jdqtyApQ28ORtFesfEIkcgn2Qg91F9A4C0NqnUy9o5KmGG'),
+        (N'customer1',N'Khach hang 01',N'customer1@techgear.local',N'CUSTOMER',N'$2a$10$krYSVBEUAou3tru/VQ7TNeu..LQm.xGlPyCrv965VT4o.J3NfIDUa'),
+        (N'customer2',N'Khach hang 02',N'customer2@techgear.local',N'CUSTOMER',N'$2a$10$my86uQR5Kvluf4H6hIvXVeoS4eLjX00/PgAc9nh2IiDz5Bk7L5mVi'),
+        (N'customer3',N'Khach hang 03',N'customer3@techgear.local',N'CUSTOMER',N'$2a$10$gyWq3PbNy9CfcDYAlm.J7eJJpGWNaerO77z6efsZ83GL0zvkCWWyC'),
+        (N'customer4',N'Khach hang 04',N'customer4@techgear.local',N'CUSTOMER',N'$2a$10$Ud/SyEuCg.6SM9g.JxXXkeSiKkTgBb6c7ijbMx.d2jXm9AomJjaEu'),
+        (N'customer5',N'Khach hang 05',N'customer5@techgear.local',N'CUSTOMER',N'$2a$10$sffmQb4E3OFYFY93uTn6UOaAzy243isNQp3Bo40XnpWmCHteMZUHK')
+    ) AS v(username,fullName,email,roleName,passwordHash)
+    INNER JOIN dbo.Roles r ON r.roleName=v.roleName;
+
+    IF (SELECT COUNT_BIG(*) FROM dbo.Users) <> 6
+        THROW 51002, 'User seed incomplete; rolling back.', 1;
 
     INSERT INTO dbo.Categories(categoryName,description) VALUES (N'Bàn phím',N'Danh mục bàn phím và thiết bị liên quan');
     INSERT INTO dbo.Categories(categoryName,description) VALUES (N'Chuột',N'Danh mục chuột và thiết bị liên quan');
