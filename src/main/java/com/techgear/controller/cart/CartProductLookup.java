@@ -21,10 +21,7 @@ public class CartProductLookup {
             return null;
         }
 
-        String sql = "SELECT p.productId, p.productName, p.price, p.stockQuantity, "
-                + "(SELECT TOP 1 imageUrl FROM dbo.ProductImages "
-                + "WHERE productId = p.productId "
-                + "ORDER BY primaryImage DESC, imageId) AS imageUrl "
+        String sql = "SELECT p.productId, p.productName, p.price, p.stockQuantity, p.imageUrl "
                 + "FROM dbo.Products p WHERE p.productId = ? AND p.active = 1";
         try (Connection connection = DBConnection.getConnection();
                 PreparedStatement statement = connection.prepareStatement(sql)) {

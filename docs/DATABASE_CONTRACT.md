@@ -7,8 +7,8 @@ Schema `dbo`; identity INT là khóa chính. Java `int` ↔ INT, `boolean` ↔ B
 DATETIME2 lưu UTC theo quy ước; JDBC cần giữ quy ước này khi đọc/ghi.
 Các cột NULL dùng kiểu tham chiếu Java và có thể nhận null.
 
-Nguồn đang dùng: `database/TechGear_Full_Setup.sql`, database `TechGearDB_Local`.
-Có hai role ADMIN/CUSTOMER, sáu user demo, 40 sản phẩm.
+Nguồn đang dùng: `database/TechGear_Full_Setup.sql`, database `TechGearDB_Local`, phiên bản setup 2.0.
+Có hai role ADMIN/CUSTOMER, sáu user demo, 15 sản phẩm.
 `schema.sql` là bản khung cũ, không chạy kèm setup mới.
 FK mặc định NO ACTION: không xóa dây chuyền lịch sử đơn hàng.
 Tên field Java trùng tên cột SQL. Giá trị mặc định SQL chỉ áp dụng khi INSERT bỏ qua cột;
@@ -54,7 +54,7 @@ constructor Java không tự áp dụng default SQL.
 
 ## Products (`Product`)
 
-Setup mới lưu ảnh tại `Products.imageUrl NVARCHAR(500) NULL`.
+Setup v2 lưu ảnh tại `Products.imageUrl NVARCHAR(1000) NULL`.
 Model/DAO sản phẩm vẫn là khung cũ, Người 2 cần đồng bộ khi triển khai.
 
 | Cột | Java | SQL / PK / FK / constraint |
@@ -68,6 +68,29 @@ Model/DAO sản phẩm vẫn là khung cũ, Người 2 cần đồng bộ khi tr
 | stockQuantity | int | INT NOT NULL CHECK (stockQuantity >= 0) |
 | active | boolean | BIT NOT NULL DEFAULT 1 |
 | createdAt | LocalDateTime | DATETIME2 NOT NULL DEFAULT SYSUTCDATETIME() |
+
+Các cột bổ sung của setup v2 (chưa được Product model/DAO khung đọc/ghi):
+
+| Cột | SQL / ràng buộc |
+| --- | --- |
+| sku | NVARCHAR(50) NOT NULL UNIQUE |
+| slug | NVARCHAR(280) NOT NULL UNIQUE |
+| shortDescription | NVARCHAR(500) NULL |
+| specifications | NVARCHAR(MAX) NULL, ISJSON khi có giá trị |
+| compareAtPrice | DECIMAL(18,2) NULL hoặc >= price |
+| warrantyMonths | INT NOT NULL DEFAULT 12, >= 0 |
+| imageUrl | NVARCHAR(1000) NULL |
+| imageGalleryJson, colorsJson | NVARCHAR(MAX) NULL, ISJSON khi có giá trị |
+| averageRating | DECIMAL(2,1) NOT NULL DEFAULT 0, từ 0 đến 5 |
+| reviewCount | INT NOT NULL DEFAULT 0, >= 0 |
+| status | NVARCHAR(20) NOT NULL DEFAULT ACTIVE; DRAFT/ACTIVE/OUT_OF_STOCK/DISCONTINUED |
+| isFeatured, isBestSeller, isNewArrival | BIT NOT NULL DEFAULT 0 |
+
+Setup vẫn giữ `active BIT` độc lập với `status`; khi triển khai quản lý sản phẩm,
+nhóm cần thống nhất quy tắc cập nhật cả hai. JSON màu/rating là dữ liệu minh họa,
+chưa có bảng tồn kho theo màu hoặc đánh giá để đồng bộ tự động.
+CartProductLookup đọc ảnh chính trực tiếp từ Products.imageUrl để tương thích setup v2.
+Giữ điều kiện active = 1 và các xử lý giỏ hàng hiện tại.
 
 ## ProductImages (`ProductImage`) — chỉ có trong schema cũ, không có trong setup mới
 
