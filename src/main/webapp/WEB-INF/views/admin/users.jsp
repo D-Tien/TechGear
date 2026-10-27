@@ -7,6 +7,7 @@
 <%@ include file="../auth/_figma-start.jspf" %>
 <main class="tg-admin-content" id="tg-main">
     <a class="tg-back" href="<c:url value='/home'/>">← Về trang chủ</a>
+    <a class="tg-back" href="<c:url value='/profile'/>">Hồ sơ và đăng xuất</a>
     <div class="tg-admin-page-head">
         <div class="tg-page-title"><span class="tg-eyebrow">QUẢN LÝ</span><h1>Người dùng</h1></div>
         <button class="tg-button" type="button" data-dialog-target="tg-create-user">+ Thêm người dùng</button>
@@ -56,8 +57,8 @@
         <form class="tg-form" method="post" action="<c:url value='/admin/users'/>" data-password-validation>
             <input type="hidden" name="csrfToken" value="<c:out value="${sessionScope.csrfToken}"/>"><input type="hidden" name="action" value="create">
             <div class="tg-form-grid">
-                <div class="tg-field"><label for="tg-create-username">Tên đăng nhập</label><input id="tg-create-username" name="username" type="text" required minlength="3" maxlength="30" pattern="[A-Za-z0-9_.-]{3,30}" autocomplete="off" value="<c:out value="${submittedCreate ? param.username : ''}"/>"></div>
-                <div class="tg-field tg-field-note"><p class="tg-hint">3–30 ký tự: chữ không dấu, số, _, . hoặc -.</p></div>
+                <div class="tg-field"><label for="tg-create-username">Tên đăng nhập</label><input id="tg-create-username" name="username" type="text" required minlength="4" maxlength="30" pattern="[A-Za-z0-9_.-]{4,30}" autocomplete="off" value="<c:out value="${submittedCreate ? param.username : ''}"/>"></div>
+                <div class="tg-field tg-field-note"><p class="tg-hint">4–30 ký tự: chữ không dấu, số, _, . hoặc -.</p></div>
                 <div class="tg-field"><label for="tg-create-fullName">Họ và tên</label><input id="tg-create-fullName" name="fullName" type="text" required maxlength="100" autocomplete="off" value="<c:out value="${submittedCreate ? param.fullName : ''}"/>"></div><div class="tg-field"><label for="tg-create-email">Email</label><input id="tg-create-email" name="email" type="email" required maxlength="254" autocomplete="off" value="<c:out value="${submittedCreate ? param.email : ''}"/>"></div><div class="tg-field"><label for="tg-create-phone">Số điện thoại <span class="tg-optional">(không bắt buộc)</span></label><input id="tg-create-phone" name="phone" type="tel" maxlength="20" autocomplete="off" value="<c:out value="${submittedCreate ? param.phone : ''}"/>"></div><div class="tg-field"><label for="tg-create-roleId">Vai trò</label><select id="tg-create-roleId" name="roleId" required><c:forEach items="${roles}" var="role"><option value="${role.roleId}" ${(submittedCreate ? param.roleId eq role.roleId : role.roleName eq 'CUSTOMER') ? 'selected' : ''}><c:out value="${role.roleName}"/></option></c:forEach></select></div><div class="tg-field tg-wide"><label for="tg-create-address">Địa chỉ <span class="tg-optional">(không bắt buộc)</span></label><input id="tg-create-address" name="address" type="text" maxlength="500" autocomplete="off" value="<c:out value="${submittedCreate ? param.address : ''}"/>"></div>
                 <div class="tg-field"><label for="tg-create-password">Mật khẩu</label><input id="tg-create-password" name="password" type="password" required minlength="8" autocomplete="new-password"></div>
                 <div class="tg-field"><label for="tg-create-confirmPassword">Xác nhận mật khẩu</label><input id="tg-create-confirmPassword" name="confirmPassword" type="password" required minlength="8" autocomplete="new-password"></div>

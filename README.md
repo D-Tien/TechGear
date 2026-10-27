@@ -54,7 +54,7 @@ git clone https://github.com/D-Tien/TechGear.git
 cd TechGear
 ```
 
-**2.** Tạo database bằng file `database/schema.sql`.
+**2.** Với phiên bản Người 1 hiện tại, chạy `database/TechGear_Full_Setup.sql` trên SQL Server để tạo `TechGearDB_Local` (chỉ database rỗng). Không chạy thêm schema cũ. Xem [hướng dẫn database](database/README.md).
 
 **3.** Cấu hình các biến môi trường `DB_URL`, `DB_USER`, `DB_PASSWORD`.
 
@@ -66,7 +66,9 @@ mvn clean package
 
 **5.** Deploy `target/techgear.war` lên Tomcat 10.1.
 
-Truy cập: `http://localhost:8080/techgear/`
+Truy cập Người 1: `http://localhost:8080/techgear/login`.
+
+Hướng dẫn cấu hình, tự kiểm thử và luồng code: [docs/PERSON1_TESTING.md](docs/PERSON1_TESTING.md).
 
 ## 👥 Thành viên nhóm
 

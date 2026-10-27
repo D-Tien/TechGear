@@ -1,20 +1,20 @@
 package com.techgear.filter;
 
-import jakarta.servlet.Filter;
-import jakarta.servlet.FilterChain;
-import jakarta.servlet.ServletException;
-import jakarta.servlet.ServletRequest;
-import jakarta.servlet.ServletResponse;
+import jakarta.servlet.*;
+import jakarta.servlet.http.*;
 import java.io.IOException;
 
-/** Configured in web.xml. Security filters are TODO pass-through placeholders. */
+/** AuthenticationFilter runs first and refreshes roleName from SQL Server. */
 public class AdminFilter implements Filter {
-    public AdminFilter() { }
-
     @Override
-    public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
-            throws IOException, ServletException {
-        // TODO: Implement authorization for the ADMIN role.
+    public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
+        HttpServletRequest req = (HttpServletRequest) request;
+        HttpServletResponse res = (HttpServletResponse) response;
+        HttpSession session = req.getSession(false);
+        if (session == null || !"ADMIN".equals(session.getAttribute("roleName"))) {
+            res.sendError(403, "Chỉ ADMIN được truy cập chức năng này.");
+            return;
+        }
         chain.doFilter(request, response);
     }
 }

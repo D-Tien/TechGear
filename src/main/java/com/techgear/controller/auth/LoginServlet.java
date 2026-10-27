@@ -1,29 +1,43 @@
 package com.techgear.controller.auth;
 
+import com.techgear.dao.UserDAO;
+import com.techgear.dao.RoleDAO;
+import com.techgear.model.User;
+import com.techgear.model.Role;
+import com.techgear.util.AuthUtil;
+import com.techgear.util.PasswordUtil;
+import com.techgear.util.ValidationUtil;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
-import jakarta.servlet.http.HttpServlet;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.*;
 import java.io.IOException;
+import java.sql.SQLException;
 
 @WebServlet("/login")
 public class LoginServlet extends HttpServlet {
-    private static final long serialVersionUID = 1L;
-
-    public LoginServlet() { }
-
     @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        // TODO: Implement request handling; no DAO calls in this skeleton.
+    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         request.getRequestDispatcher("/WEB-INF/views/auth/login.jsp").forward(request, response);
     }
 
     @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        // TODO: Agree on request parameters and implement this action.
-        response.sendError(HttpServletResponse.SC_NOT_IMPLEMENTED, "TODO: Implement action.");
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        try {
+            String username = AuthUtil.text(request, "username");
+            if (!ValidationUtil.isValidUsername(username)) throw new IllegalArgumentException("Username hoặc mật khẩu không đúng.");
+            User user = new UserDAO().getUserByUsername(username);
+            if (user == null || !PasswordUtil.verifyPassword(request.getParameter("password"), user.getPasswordHash()))
+                throw new IllegalArgumentException("Username hoặc mật khẩu không đúng.");
+            if (!user.isActive()) throw new IllegalArgumentException("Tài khoản đã bị khóa. Vui lòng liên hệ ADMIN.");
+            Role role = new RoleDAO().getRoleById(user.getRoleId());
+            if (role == null) throw new IllegalArgumentException("Tài khoản chưa được cấu hình vai trò hợp lệ.");
+            request.getSession().invalidate(); // Start a new session after successful login.
+            AuthUtil.saveSession(request, user, role.getRoleName());
+            response.sendRedirect(request.getContextPath() + ("ADMIN".equals(role.getRoleName()) ? "/admin/users" : "/profile"));
+            return;
+        } catch (IllegalArgumentException exception) {
+            response.setStatus(400); request.setAttribute("error", exception.getMessage());
+        } catch (SQLException exception) { AuthUtil.databaseError(request, response, exception); }
+        doGet(request, response);
     }
 }
