@@ -24,47 +24,44 @@
                 </tr>
             </thead>
             <tbody>
-                <c:if test="${quantity > 0}">
+                <c:forEach var="row" items="${rows}">
                     <tr>
                         <td>
-                            <img src="${pageContext.request.contextPath}/assets/images/razerhuntsmanv3pro.jpg"
-                                 alt="Razer Huntsman V3 Pro" width="120" class="me-2">
-                            Razer Huntsman V3 Pro
+                            <c:if test="${not empty row.imageUrl}">
+                                <img src="<c:out value="${row.imageUrl}"/>"
+                                     alt="<c:out value="${row.name}"/>" width="120" class="me-2">
+                            </c:if>
+                            <c:out value="${row.name}"/>
                         </td>
-                        <td>5.990.000 đ</td>
+                        <td>${row.priceText}</td>
                         <td>
                             <div class="d-flex align-items-center gap-2">
-                                <c:if test="${quantity > 1}">
-                                    <form action="${pageContext.request.contextPath}/cart" method="post">
-                                        <input type="hidden" name="action" value="decrease">
-                                        <button class="btn btn-outline-primary" type="submit">−</button>
-                                    </form>
-                                </c:if>
-                                <c:if test="${quantity == 1}">
-                                    <button class="btn btn-outline-secondary" type="button" disabled>−</button>
-                                </c:if>
-                                <span>${quantity}</span>
-                                <c:if test="${quantity < 99}">
-                                    <form action="${pageContext.request.contextPath}/cart" method="post">
-                                        <input type="hidden" name="action" value="increase">
-                                        <button class="btn btn-outline-primary" type="submit">+</button>
-                                    </form>
-                                </c:if>
-                                <c:if test="${quantity == 99}">
-                                    <button class="btn btn-outline-secondary" type="button" disabled>+</button>
-                                </c:if>
+                                <form action="${pageContext.request.contextPath}/cart" method="post">
+                                    <input type="hidden" name="action" value="decrease">
+                                    <input type="hidden" name="productId" value="${row.productId}">
+                                    <button class="btn btn-outline-primary" type="submit"
+                                            <c:if test="${row.quantity <= 1}">disabled</c:if>>−</button>
+                                </form>
+                                <span>${row.quantity}</span>
+                                <form action="${pageContext.request.contextPath}/cart" method="post">
+                                    <input type="hidden" name="action" value="increase">
+                                    <input type="hidden" name="productId" value="${row.productId}">
+                                    <button class="btn btn-outline-primary" type="submit"
+                                            <c:if test="${row.quantity >= 99 || row.quantity >= row.stock}">disabled</c:if>>+</button>
+                                </form>
                             </div>
                         </td>
-                        <td>${totalText}</td>
+                        <td>${row.lineTotalText}</td>
                         <td>
                             <form action="${pageContext.request.contextPath}/cart" method="post">
                                 <input type="hidden" name="action" value="remove">
+                                <input type="hidden" name="productId" value="${row.productId}">
                                 <button class="btn btn-outline-danger" type="submit">Xóa</button>
                             </form>
                         </td>
                     </tr>
-                </c:if>
-                <c:if test="${quantity == 0}">
+                </c:forEach>
+                <c:if test="${empty rows}">
                     <tr>
                         <td colspan="5" class="text-center">Chưa có sản phẩm trong giỏ.</td>
                     </tr>
@@ -73,20 +70,34 @@
         </table>
     </div>
 
+    <c:if test="${empty rows}">
+        <div class="d-flex align-items-center gap-3 my-3">
+            <img src="${pageContext.request.contextPath}/assets/images/razerhuntsmanv3pro.jpg"
+                 alt="Razer Huntsman V3 Pro" width="120">
+            <div>
+                <div>Razer Huntsman V3 Pro — 5.990.000 đ</div>
+                <form action="${pageContext.request.contextPath}/cart/add" method="post" class="mt-2">
+                    <input type="hidden" name="productId" value="-1">
+                    <button class="btn btn-primary" type="submit">Thêm vào giỏ</button>
+                </form>
+            </div>
+        </div>
+    </c:if>
+
     <p class="text-end fs-5"><strong>Tổng tiền: ${totalText}</strong></p>
     <div class="d-flex justify-content-between">
-        <a class="btn btn-outline-secondary" href="${pageContext.request.contextPath}/products">Tiếp tục mua sắm</a>
-        <c:if test="${quantity > 0}">
+        <div class="d-flex gap-2">
+            <a class="btn btn-outline-secondary" href="${pageContext.request.contextPath}/products">Tiếp tục mua sắm</a>
+        </div>
+        <c:if test="${not empty rows}">
             <form action="${pageContext.request.contextPath}/checkout" method="post">
                 <button class="btn btn-success" type="submit">Thanh toán</button>
             </form>
         </c:if>
-        <c:if test="${quantity == 0}">
+        <c:if test="${empty rows}">
             <button class="btn btn-secondary" type="button" disabled>Thanh toán</button>
         </c:if>
     </div>
 </main>
 </body>
 </html>
-
-
