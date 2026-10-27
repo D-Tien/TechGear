@@ -1,6 +1,6 @@
 ﻿-- TECHGEAR / PRJ301 - FULL LOCAL SQL SERVER SETUP
 -- Version: 1.0 | 27/10/2026
--- ONE FILE: creates TechGearDB, 8 tables and 40 illustrative demo products.
+-- ONE FILE: creates TechGearDB_Local, 8 tables and 40 illustrative demo products.
 -- Run in Microsoft SQL Server Management Studio (SSMS) using Execute / F5.
 -- Safe policy: NEVER drops/overwrites an existing schema or existing business data.
 -- If dbo.Roles already exists, STOP with an error rather than silently alter it.
@@ -13,10 +13,10 @@
 
 USE [master];
 GO
-IF DB_ID(N'TechGearDB') IS NULL
-    EXEC(N'CREATE DATABASE [TechGearDB]');
+IF DB_ID(N'TechGearDB_Local') IS NULL
+    EXEC(N'CREATE DATABASE [TechGearDB_Local]');
 GO
-USE [TechGearDB];
+USE [TechGearDB_Local];
 GO
 
 -- Avoid touching an existing TechGear database or misaligning the Java/DAO contract.
