@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="referrer" content="no-referrer">
     <title><c:out value="${pageTitle}"/> | TechGear</title>
-    <link rel="stylesheet" href="<c:url value='/assets/css/auth.css?v=account3'/>">
+    <link rel="stylesheet" href="<c:url value='/assets/css/auth.css?v=account7'/>">
     <script src="<c:url value='/assets/js/auth.js?v=figma1'/>" defer></script>
 </head>
 <body class="tg-person1 tg-view-${viewMode}">

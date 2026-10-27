@@ -8,7 +8,7 @@ Servlet forward JSP trong WEB-INF hoặc redirect sau khi POST thành công.
 `filter`: UTF-8, session, quyền ADMIN và CSRF cho Người 1;
 `util`: BCrypt, validation, form/session helper. CSS/JS/font Người 1 độc lập.
 Module Người 2/3 được giữ theo main của nhóm, gồm các thay đổi Cart/Checkout mới.
-Chi tiết chạy và kiểm thử: `docs/PERSON1_TESTING.md`.
+Hướng dẫn chạy và kiểm thử nằm trong `README.md` và `database/README.md`.
 
 ```text
 .env.example
@@ -101,7 +101,6 @@ src/main/webapp/assets/js/main.js
 src/main/webapp/assets/js/product.js
 src/main/webapp/index.jsp
 database/TechGear_Full_Setup.sql
-docs/PERSON1_TESTING.md
 src/main/java/com/techgear/filter/CsrfFilter.java
 src/main/java/com/techgear/util/AuthUtil.java
 src/main/webapp/WEB-INF/views/auth/_figma-start.jspf

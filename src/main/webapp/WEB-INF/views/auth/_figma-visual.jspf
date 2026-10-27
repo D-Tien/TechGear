@@ -1,6 +1,6 @@
 <%@ page pageEncoding="UTF-8" %>
 <aside class="tg-auth-visual" aria-label="TechGear">
-    <a class="tg-logo tg-logo-light" href="<c:url value='/home'/>"><i aria-hidden="true">T</i><span>Tech<strong>Gear</strong></span></a>
+    <a class="tg-logo tg-logo-light" href="<c:url value='/home'/>"><img class="tg-brand-image" src="<c:url value='/assets/images/techgear-logo.png?v=5'/>" alt="TechGear" width="2172" height="724"></a>
     <div class="tg-visual-copy">
         <c:choose>
             <c:when test="${authScreen eq 'register'}">

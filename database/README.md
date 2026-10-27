@@ -46,4 +46,4 @@ Nếu SSMS dùng Windows Authentication thì không có nghĩa JDBC hiện đã 
 Không ghi mật khẩu vào Java, SQL hay Git. SQL Server phải bật TCP/IP; kiểm tra cổng thực tế
 và firewall nếu kết nối từ máy khác. Khởi động lại Tomcat sau khi đổi biến môi trường.
 
-Chi tiết kiểm thử: [PERSON1_TESTING.md](../docs/PERSON1_TESTING.md).
+Các bước kiểm thử tài khoản: [README dự án](../README.md#kiểm-thử-tài-khoản).
