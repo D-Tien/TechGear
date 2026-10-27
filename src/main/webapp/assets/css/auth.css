@@ -1,1 +1,220 @@
-/* TODO: Implement auth styles. */
+/* Person 1: Figma Make → plain CSS. All component rules are scoped. */
+@font-face {
+    font-family: "TechGear Inter";
+    src: url("../fonts/inter/Inter-variable.ttf") format("truetype");
+    font-style: normal;
+    font-weight: 100 900;
+    font-display: swap;
+}
+body.tg-person1 {
+    --tg-blue: #155dfc;
+    --tg-navy: #0b1220;
+    --tg-bg: #f5f7fb;
+    --tg-line: #e5eaf1;
+    --tg-muted: #64748b;
+    margin: 0;
+    color: var(--tg-navy);
+    background: #fff;
+    font: 400 14px/1.5 "TechGear Inter", Inter, system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased;
+}
+.tg-person1 *, .tg-person1 *::before, .tg-person1 *::after { box-sizing: border-box; }
+.tg-person1 [hidden] { display: none !important; }
+.tg-person1 button, .tg-person1 input, .tg-person1 select, .tg-person1 textarea { font: inherit; }
+.tg-person1 button { cursor: pointer; }
+.tg-person1 a { color: var(--tg-blue); text-decoration: none; }
+.tg-person1 a:hover { text-decoration: underline; }
+.tg-person1 h1, .tg-person1 h2, .tg-person1 h3, .tg-person1 p { margin-top: 0; }
+.tg-person1 h1 { font-size: 40px; line-height: 1.08; letter-spacing: -1.5px; font-weight: 700; }
+.tg-person1 h2 { font-size: 21px; line-height: 1.3; letter-spacing: -.5px; margin-bottom: 16px; }
+.tg-person1 :focus-visible { outline: 3px solid #8bb3ff; outline-offset: 3px; }
+.tg-person1 .tg-sr-only, .tg-person1 .tg-skip:not(:focus) { position: absolute; width: 1px; height: 1px; padding: 0; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+.tg-person1 .tg-skip:focus { position: fixed; z-index: 100; top: 12px; left: 12px; background: #fff; border: 1px solid var(--tg-line); border-radius: 8px; padding: 10px 16px; }
+.tg-person1 .tg-eyebrow { display: block; font-size: 11px; letter-spacing: 1.5px; font-weight: 800; color: var(--tg-blue); margin-bottom: 16px; }
+.tg-person1 .tg-muted, .tg-person1 .tg-hint { color: var(--tg-muted); }
+.tg-person1 .tg-hint { font-size: 12px; line-height: 1.6; margin: 0; }
+.tg-person1 .tg-optional { color: var(--tg-muted); font-weight: 400; font-size: 12px; }
+.tg-person1 .tg-logo { display: flex; gap: 7px; align-items: center; width: max-content; color: var(--tg-navy); font-size: 22px; font-weight: 800; letter-spacing: -.5px; }
+.tg-person1 .tg-logo:hover { text-decoration: none; }
+.tg-person1 .tg-logo i { display: grid; place-items: center; width: 32px; height: 32px; border-radius: 9px; background: var(--tg-blue); color: #fff; font-style: normal; letter-spacing: 0; }
+.tg-person1 .tg-logo strong { color: var(--tg-blue); font-weight: 800; }
+.tg-person1 .tg-logo-light { color: #fff; }
+.tg-person1 .tg-button { display: inline-flex; align-items: center; justify-content: center; gap: 8px; border: 1px solid var(--tg-blue); border-radius: 9px; background: var(--tg-blue); color: #fff; padding: 12px 18px; min-height: 45px; font-weight: 700; line-height: 1.4; text-decoration: none; transition: transform .2s, box-shadow .2s; }
+.tg-person1 .tg-button:hover { transform: translateY(-1px); box-shadow: 0 8px 18px rgb(21 93 252 / 20%); text-decoration: none; }
+.tg-person1 .tg-button-block { width: 100%; margin-top: 8px; }
+.tg-person1 .tg-secondary { color: var(--tg-navy); background: #fff; border-color: var(--tg-line); }
+.tg-person1 .tg-back { display: inline-block; width: max-content; font-weight: 600; font-size: 14px; }
+.tg-person1 .tg-field { display: flex; flex-direction: column; gap: 7px; min-width: 0; }
+.tg-person1 .tg-field > label { font-weight: 600; line-height: 1.5; }
+.tg-person1 .tg-field input, .tg-person1 .tg-field select { width: 100%; min-width: 0; border: 1px solid var(--tg-line); border-radius: 9px; padding: 12px; min-height: 46px; background: #fff; color: var(--tg-navy); outline: none; }
+.tg-person1 .tg-field input:focus, .tg-person1 .tg-field select:focus { border-color: var(--tg-blue); box-shadow: 0 0 0 3px #e8efff; }
+.tg-person1 .tg-field input[readonly] { background: #f8fafc; color: var(--tg-muted); }
+.tg-person1 .tg-password-field { position: relative; }
+.tg-person1 .tg-password-field input { padding-right: 65px; }
+.tg-person1 .tg-password-toggle { position: absolute; right: 8px; top: 50%; transform: translateY(-50%); color: var(--tg-blue); border: 0; background: none; padding: 8px; font-size: 12px; font-weight: 600; }
+.tg-person1 .tg-form { display: flex; flex-direction: column; gap: 14px; margin: 0; }
+.tg-person1 .tg-form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.tg-person1 .tg-wide { grid-column: 1 / -1; }
+.tg-person1 .tg-form-actions { display: flex; gap: 10px; margin-top: 8px; }
+.tg-person1 .tg-notice { padding: 13px 16px; border-radius: 9px; background: var(--tg-bg); border: 1px solid var(--tg-line); font-size: 13px; line-height: 1.6; overflow-wrap: anywhere; }
+.tg-person1 .tg-notice-error { color: #a32936; border-color: #fac9ce; background: #fff1f2; }
+.tg-person1 .tg-notice-success { color: #087b4d; border-color: #bfe8d2; background: #ecfaf3; }
+/* Account forms from the updated Figma Make design. */
+body.tg-view-auth { min-height: 100vh; min-height: 100dvh; background: #1476c3; padding: 0; }
+.tg-view-auth .tg-auth-page { width: 100%; min-height: 100vh; min-height: 100dvh; border-radius: 0; overflow: hidden; display: grid; grid-template-columns: 54% 46%; background: linear-gradient(145deg, #287ed0, #0069b5); position: relative; }
+.tg-view-auth .tg-auth-page::before, .tg-view-auth .tg-auth-page::after { content: ""; position: absolute; border-radius: 50%; background: rgb(255 255 255 / 5.5%); pointer-events: none; }
+.tg-view-auth .tg-auth-page::before { width: 560px; height: 560px; left: -230px; bottom: -300px; }
+.tg-view-auth .tg-auth-page::after { width: 430px; height: 430px; right: -190px; top: -230px; }
+.tg-view-auth .tg-auth-visual { padding: 52px 68px; color: #fff; display: flex; flex-direction: column; justify-content: space-between; gap: 56px; position: relative; z-index: 1; min-width: 0; }
+.tg-view-auth .tg-logo-light { color: #fff; }
+.tg-view-auth .tg-logo-light i { background: #fff; color: #1477c4; }
+.tg-view-auth .tg-logo-light strong { color: #fff; }
+.tg-view-auth .tg-visual-copy .tg-eyebrow { color: #fff; font-size: 14px; font-weight: 800; letter-spacing: 4px; margin-bottom: 18px; }
+.tg-view-auth .tg-visual-copy h2 { font-size: 54px; line-height: 1.08; letter-spacing: -2px; font-weight: 700; margin: 18px 0; }
+.tg-view-auth .tg-visual-copy p { max-width: 430px; font-size: 15px; line-height: 1.8; color: #d8edff; margin: 0; }
+.tg-view-auth .tg-welcome-line { width: 72px; height: 3px; background: rgb(255 255 255 / 45%); margin-top: 28px; border-radius: 3px; }
+.tg-view-auth .tg-welcome-footer { font-size: 10px; letter-spacing: 1.5px; color: #c7e5ff; line-height: 1.8; }
+.tg-view-auth .tg-auth-card-wrap { display: grid; place-items: center; padding: 44px 56px; position: relative; z-index: 1; min-width: 0; }
+.tg-view-auth .tg-auth-card { width: 100%; max-width: 480px; min-width: 0; background: #fff; border-radius: 24px; padding: 42px 40px; box-shadow: 0 20px 50px rgb(0 43 85 / 22%); }
+.tg-view-auth .tg-login-kicker { font-size: 10px; letter-spacing: 1.8px; font-weight: 800; color: var(--tg-blue); }
+.tg-view-auth .tg-auth-heading h1 { font-size: 34px; margin: 9px 0 7px; letter-spacing: -1.2px; }
+.tg-view-auth .tg-auth-heading > p { color: var(--tg-muted); margin: 0 0 28px; line-height: 1.6; }
+.tg-view-auth .tg-auth-card > .tg-back { color: var(--tg-muted); font-size: 11px; font-weight: 700; margin-bottom: 22px; }
+.tg-view-auth .tg-auth-card > .tg-notice { margin-bottom: 18px; }
+.tg-view-auth .tg-form { gap: 17px; }
+.tg-view-auth .tg-field { gap: 8px; font-size: 12px; }
+.tg-view-auth .tg-field > label { font-weight: 700; }
+.tg-view-auth .tg-field input { min-height: 50px; padding: 0 15px; border-color: #dbe1e9; border-radius: 10px; background: #fbfcfe; font-size: 12px; }
+.tg-view-auth .tg-field input::placeholder { color: #94a3b8; }
+.tg-view-auth .tg-password-field input { padding-right: 58px; }
+.tg-view-auth .tg-password-toggle { font-size: 11px; color: #475569; }
+.tg-view-auth .tg-form > .tg-button { width: 100%; min-height: 50px; margin: 5px 0 0; background: linear-gradient(90deg, #1679c8, #006cad); border: 0; font-size: 15px; }
+.tg-view-auth .tg-login-divider { height: 1px; background: var(--tg-line); margin: 28px 0 22px; text-align: center; }
+.tg-view-auth .tg-login-divider span { position: relative; top: -11px; background: #fff; padding: 0 10px; color: #94a3b8; font-size: 10px; }
+.tg-view-auth .tg-auth-switch { margin: 22px 0 0; text-align: center; font-size: 12px; color: var(--tg-muted); line-height: 1.7; }
+.tg-view-auth .tg-login-divider + .tg-auth-switch { margin-top: 0; }
+.tg-view-auth .tg-auth-switch a { font-weight: 700; }
+.tg-view-auth .tg-register-fields { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 13px; }
+.tg-view-auth .tg-register-fields input { min-height: 48px; }
+.tg-view-auth .tg-hint { font-size: 10px; }
+.tg-view-auth .tg-optional { font-size: 10px; }
+.tg-view-auth .tg-password-note { display: flex; flex-direction: column; gap: 3px; background: #f3f7ff; border-radius: 9px; padding: 11px 13px; color: var(--tg-muted); font-size: 10px; }
+.tg-view-auth .tg-password-note b { color: #334155; }
+.tg-view-auth .tg-account-register { min-height: 100vh; min-height: 100dvh; }
+.tg-view-auth .tg-account-register .tg-auth-card-wrap { padding-block: 28px; }
+.tg-view-auth .tg-account-register .tg-auth-card { padding-block: 28px; }
+.tg-view-auth .tg-account-password { min-height: 100vh; min-height: 100dvh; }
+.tg-person1 .tg-container { max-width: 1240px; margin: auto; padding: 36px 24px 88px; }
+.tg-person1 .tg-page-title { margin: 20px 0 32px; }
+.tg-person1 .tg-page-title h1 { margin: 0; }
+.tg-person1 .tg-profile-layout { display: grid; grid-template-columns: 240px minmax(0, 1fr); gap: 25px; }
+.tg-person1 .tg-profile-nav { border: 1px solid var(--tg-line); border-radius: 12px; padding: 20px; height: max-content; display: flex; flex-direction: column; min-width: 0; }
+.tg-person1 .tg-avatar { width: 58px; height: 58px; display: grid; place-items: center; border-radius: 50%; color: var(--tg-blue); background: #e8efff; font-weight: 800; font-size: 16px; margin-bottom: 10px; }
+.tg-person1 .tg-account-email { color: var(--tg-muted); font-size: 12px; margin: 5px 0 20px; overflow-wrap: anywhere; }
+.tg-person1 .tg-profile-nav nav { display: flex; flex-direction: column; gap: 2px; }
+.tg-person1 .tg-profile-nav nav a, .tg-person1 .tg-profile-nav nav button { display: block; width: 100%; border: 0; background: #fff; color: var(--tg-navy); text-align: left; padding: 12px; border-radius: 8px; font-weight: 400; }
+.tg-person1 .tg-profile-nav nav a:hover, .tg-person1 .tg-profile-nav nav button:hover { background: #f5f7fb; text-decoration: none; }
+.tg-person1 .tg-profile-nav nav a.tg-active { background: #e8efff; color: var(--tg-blue); font-weight: 700; }
+.tg-person1 .tg-profile-nav form { margin: 0; }
+.tg-person1 .tg-form-card, .tg-person1 .tg-panel { border: 1px solid var(--tg-line); border-radius: 14px; padding: 24px; background: #fff; height: max-content; min-width: 0; }
+.tg-person1 .tg-form-card > .tg-notice { margin-bottom: 16px; }
+.tg-person1 .tg-divider { border: 0; border-top: 1px solid var(--tg-line); margin: 28px 0; }
+body.tg-view-admin { min-height: 100vh; background: #f5f7fb; }
+.tg-person1 .tg-admin-content { max-width: 1500px; margin: auto; padding: 25px 30px 80px; }
+.tg-person1 .tg-admin-page-head { display: flex; justify-content: space-between; align-items: center; gap: 20px; }
+.tg-person1 .tg-admin-content > .tg-notice { margin-bottom: 20px; }
+.tg-person1 .tg-catalog-tools { display: flex; gap: 10px; align-items: center; margin-bottom: 22px; }
+.tg-person1 .tg-search { display: flex; flex: 1; max-width: 360px; border: 1px solid var(--tg-line); border-radius: 10px; overflow: hidden; background: var(--tg-bg); }
+.tg-person1 .tg-search input { border: 0; background: transparent; outline: none; padding: 13px 16px; min-width: 0; flex: 1; color: var(--tg-navy); }
+.tg-person1 .tg-search:focus-within { border-color: var(--tg-blue); box-shadow: 0 0 0 3px #e8efff; }
+.tg-person1 .tg-search button { border: 0; background: transparent; padding: 0 16px; font-size: 22px; color: var(--tg-muted); }
+.tg-person1 .tg-catalog-tools > select { padding: 12px; border: 1px solid var(--tg-line); border-radius: 9px; background: #fff; color: var(--tg-navy); min-height: 46px; }
+.tg-person1 .tg-table-panel { padding: 0; margin-top: 18px; overflow: hidden; }
+.tg-person1 .tg-panel-title { display: flex; justify-content: space-between; align-items: center; gap: 20px; padding: 20px 22px; }
+.tg-person1 .tg-panel-title h2 { margin: 0; font-size: 19px; }
+.tg-person1 .tg-panel-title > span { font-size: 12px; }
+.tg-person1 .tg-table-wrap { overflow-x: auto; }
+.tg-person1 .tg-table-wrap table { width: 100%; border-collapse: collapse; white-space: nowrap; }
+.tg-person1 .tg-table-wrap th { text-align: left; background: #f8fafc; color: var(--tg-muted); font-size: 10px; text-transform: uppercase; letter-spacing: .6px; font-weight: 700; }
+.tg-person1 .tg-table-wrap td, .tg-person1 .tg-table-wrap th { padding: 13px 18px; border-top: 1px solid var(--tg-line); }
+.tg-person1 .tg-table-wrap td { font-size: 13px; }
+.tg-person1 .tg-table-person { display: flex; align-items: center; gap: 11px; }
+.tg-person1 .tg-table-person b { display: block; font-weight: 600; }
+.tg-person1 .tg-table-person small { display: block; color: var(--tg-muted); font-size: 11px; margin-top: 3px; }
+.tg-person1 .tg-small-avatar { width: 35px; height: 35px; border-radius: 50%; background: #e8efff; color: var(--tg-blue); display: grid; place-items: center; font-weight: 700; flex-shrink: 0; }
+.tg-person1 .tg-badge { display: inline-flex; width: max-content; padding: 5px 9px; border-radius: 999px; font-size: 10px; font-weight: 800; }
+.tg-person1 .tg-blue { color: var(--tg-blue); background: #e8efff; }
+.tg-person1 .tg-neutral { color: #52617a; background: #f0f3f8; }
+.tg-person1 .tg-green { color: #078452; background: #e6f8ef; }
+.tg-person1 .tg-red { color: #c62934; background: #ffe9ea; }
+.tg-person1 .tg-row-action { border: 0; background: transparent; color: var(--tg-blue); padding: 8px 0; font-size: 12px; font-weight: 600; }
+.tg-person1 .tg-row-action span { margin-left: 5px; }
+.tg-person1 .tg-empty-state { text-align: center; color: var(--tg-muted); padding: 40px 18px; }
+.tg-person1 .tg-pagination { display: flex; justify-content: center; align-items: center; gap: 7px; margin: 30px 0; flex-wrap: wrap; }
+.tg-person1 .tg-pagination:empty { margin: 16px 0; }
+.tg-person1 .tg-pagination button { border: 1px solid var(--tg-line); background: #fff; color: var(--tg-navy); border-radius: 8px; min-width: 38px; padding: 9px 13px; }
+.tg-person1 .tg-pagination button[aria-current="page"] { background: var(--tg-blue); color: #fff; border-color: var(--tg-blue); }
+.tg-person1 .tg-pagination button:disabled { cursor: default; opacity: .4; }
+.tg-person1 .tg-dialog { width: min(680px, calc(100% - 32px)); max-height: calc(100dvh - 48px); overflow-y: auto; padding: 28px; border: 1px solid var(--tg-line); border-radius: 14px; background: #fff; color: var(--tg-navy); box-shadow: 0 20px 80px rgb(11 18 32 / 20%); }
+.tg-person1 .tg-dialog::backdrop { background: rgb(11 18 32 / 55%); }
+.tg-person1 .tg-dialog-heading { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; }
+.tg-person1 .tg-dialog-heading h2 { font-size: 24px; }
+.tg-person1 .tg-dialog-close { border: 0; background: transparent; color: var(--tg-muted); font-size: 26px; line-height: 1; padding: 0 4px; }
+.tg-person1 .tg-dialog > .tg-notice { margin-bottom: 18px; }
+.tg-person1 .tg-dialog-actions { display: flex; justify-content: flex-end; gap: 10px; margin-top: 12px; }
+.tg-person1 .tg-field-note { justify-content: center; }
+.tg-person1 .tg-checkbox { display: flex; gap: 9px; align-items: center; }
+.tg-person1 .tg-checkbox input { accent-color: var(--tg-blue); width: 16px; height: 16px; margin: 0; }
+@media (max-width: 800px) {
+    .tg-person1 h1 { font-size: 31px; }
+    .tg-person1 .tg-container { padding: 22px 16px 80px; }
+    .tg-person1 .tg-profile-layout { grid-template-columns: 1fr; }
+    .tg-person1 .tg-form-grid { grid-template-columns: 1fr; }
+    .tg-person1 .tg-wide { grid-column: auto; }
+    .tg-person1 .tg-profile-nav { padding: 18px; }
+    .tg-person1 .tg-form-card { padding: 22px; }
+    .tg-person1 .tg-admin-content { padding: 18px 14px 80px; }
+    .tg-person1 .tg-admin-page-head { align-items: flex-start; flex-wrap: wrap; gap: 12px; margin-bottom: 22px; }
+    .tg-person1 .tg-admin-page-head .tg-page-title { margin-bottom: 0; }
+    .tg-person1 .tg-catalog-tools { flex-wrap: wrap; }
+    .tg-person1 .tg-search { max-width: none; flex-basis: 100%; }
+    .tg-person1 .tg-catalog-tools > select { flex: 1; min-width: 0; }
+    .tg-person1 .tg-panel-title { align-items: flex-start; padding: 18px; flex-wrap: wrap; gap: 8px; }
+    .tg-person1 .tg-table-wrap .tg-empty-state { text-align: left; }
+    .tg-person1 .tg-dialog { padding: 22px; max-height: calc(100dvh - 24px); }
+    .tg-person1 .tg-field-note { display: none; }
+}
+@media (max-width: 430px) {
+    .tg-person1 .tg-dialog-actions .tg-button { flex: 1; }
+    .tg-person1 .tg-form-actions .tg-button { width: 100%; }
+}
+@media (prefers-reduced-motion: reduce) {
+    .tg-person1 .tg-button { transition: none; }
+    .tg-person1 .tg-button:hover { transform: none; }
+}
+
+@media (max-width: 1100px) and (min-width: 801px) {
+    .tg-view-auth .tg-auth-visual { padding: 44px 40px; }
+    .tg-view-auth .tg-visual-copy h2 { font-size: 46px; }
+    .tg-view-auth .tg-auth-card-wrap { padding: 32px 24px; }
+    .tg-view-auth .tg-auth-card { padding-inline: 28px; }
+}
+@media (max-width: 800px) {
+    body.tg-view-auth { padding: 0; }
+    .tg-view-auth .tg-auth-page { grid-template-columns: 1fr; min-height: 100vh; min-height: 100dvh; }
+    .tg-view-auth .tg-auth-visual { padding: 30px 28px 12px; gap: 42px; }
+    .tg-view-auth .tg-visual-copy h2 { font-size: 40px; }
+    .tg-view-auth .tg-welcome-footer { display: none; }
+    .tg-view-auth .tg-auth-card-wrap { padding: 20px; }
+    .tg-view-auth .tg-auth-card { padding: 32px 24px; }
+}
+@media (max-width: 520px) {
+    .tg-view-auth .tg-register-fields { grid-template-columns: 1fr; }
+    .tg-view-auth .tg-auth-heading h1 { font-size: 30px; }
+    .tg-view-auth .tg-auth-visual { padding-inline: 24px; }
+    .tg-view-auth .tg-visual-copy .tg-eyebrow { font-size: 11px; letter-spacing: 2.5px; }
+    .tg-view-auth .tg-visual-copy h2 { font-size: 36px; }
+    .tg-view-auth .tg-visual-copy p { font-size: 13px; }
+    .tg-view-auth .tg-auth-card-wrap { padding: 16px; }
+    .tg-view-auth .tg-auth-card { padding-inline: 22px; }
+}

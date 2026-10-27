@@ -6,6 +6,7 @@ import java.time.LocalDateTime;
 public class User {
     private int userId;
     private int roleId;
+    private String username;
     private String fullName;
     private String email;
     private String passwordHash;
@@ -26,6 +27,15 @@ public class User {
         this.address = address;
         this.active = active;
         this.createdAt = createdAt;
+    }
+
+    public String getUsername() { return username; }
+
+    public void setUsername(String username) { this.username = username; }
+
+    public User(int userId, int roleId, String username, String fullName, String email, String passwordHash, String phone, String address, boolean active, LocalDateTime createdAt) {
+        this(userId, roleId, fullName, email, passwordHash, phone, address, active, createdAt);
+        this.username = username;
     }
 
     public int getUserId() {

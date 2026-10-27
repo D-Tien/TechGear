@@ -1,43 +1,34 @@
 # Servlet API contract
 
-Đây là contract cho skeleton; chưa có endpoint nghiệp vụ hoạt động.
-GET chỉ forward JSP placeholder. POST trả HTTP 501 và không sửa dữ liệu.
-Logout GET/POST cũng trả 501; chưa hủy session.
+## Người 1 đã triển khai
 
-| Route | Servlet | GET placeholder | POST | Owner |
-| --- | --- | --- | --- | --- |
-| `/login` | `auth.LoginServlet` | `auth/login.jsp` | 501 | Person 1 |
-| `/register` | `auth.RegisterServlet` | `auth/register.jsp` | 501 | Person 1 |
-| `/logout` | `auth.LogoutServlet` | 501 | 501 | Person 1 |
-| `/forgot-password` | `auth.ForgotPasswordServlet` | `auth/forgot-password.jsp` | 501 | Person 1 |
-| `/reset-password` | `auth.ResetPasswordServlet` | `auth/reset-password.jsp` | 501 | Person 1 |
-| `/change-password` | `auth.ChangePasswordServlet` | `auth/change-password.jsp` | 501 | Person 1 |
-| `/profile` | `user.ProfileServlet` | `user/profile.jsp` | 501 | Person 1 |
-| `/my-orders` | `user.MyOrdersServlet` | `user/my-orders.jsp` | 501 | Person 3 |
-| `/home` | `product.HomeServlet` | `product/home.jsp` | 501 | Person 2 |
-| `/products` | `product.ProductListServlet` | `product/product-list.jsp` | 501 | Person 2 |
-| `/product-detail` | `product.ProductDetailServlet` | `product/product-detail.jsp` | 501 | Person 2 |
-| `/search` | `product.SearchServlet` | `product/product-list.jsp` | 501 | Person 2 |
-| `/cart` | `cart.CartServlet` | `cart/cart.jsp` | 501 | Person 3 |
-| `/checkout` | `cart.CheckoutServlet` | `cart/checkout.jsp` | 501 | Person 3 |
-| `/admin/dashboard` | `admin.DashboardServlet` | `admin/dashboard.jsp` | 501 | Person 3 |
-| `/admin/products` | `admin.ProductManagementServlet` | `admin/products.jsp` | 501 | Person 2 |
-| `/admin/categories` | `admin.CategoryManagementServlet` | `admin/categories.jsp` | 501 | Person 2 |
-| `/admin/brands` | `admin.BrandManagementServlet` | `admin/brands.jsp` | 501 | Person 2 |
-| `/admin/users` | `admin.UserManagementServlet` | `admin/users.jsp` | 501 | Person 1 |
-| `/admin/orders` | `admin.OrderManagementServlet` | `admin/orders.jsp` | 501 | Person 3 |
+Tất cả POST bên dưới cần `csrfToken` lấy từ biểu mẫu GET cùng session.
+Validation lỗi: HTTP 400 + JSP hiện thông báo. Không có quyền: 403.
+Kết nối database lỗi: 503, thông tin chi tiết chỉ ghi log Tomcat.
 
-## Quy ước dùng chung
+| Route | GET | POST / tham số |
+| --- | --- | --- |
+| `/login` | Form | `username`, `password`; tạo session mới; ADMIN → `/admin/users`, CUSTOMER → `/profile` |
+| `/register` | Form | `username`, `fullName`, `email`, `phone`, `password`, `confirmPassword`; role luôn CUSTOMER |
+| `/logout` | 405 | Hủy session, về `/login?logout=1` |
+| `/profile` | Hồ sơ user đang đăng nhập | `fullName`, `email`, `phone`, `address`, `currentPassword`; bỏ qua userId/roleId/active từ client |
+| `/change-password` | Form, yêu cầu đăng nhập | `currentPassword`, `password`, `confirmPassword`; đổi xong hủy session hiện tại |
+| `/admin/users` | Danh sách thực tế, `keyword` tùy chọn | `action=create/update`, `adminPassword`, `fullName`, `email`, `phone`, `address`, `roleId`; create thêm `username/password/confirmPassword`, update thêm `userId/active=true` |
 
-- Session `currentUser`: `com.techgear.model.User`; không chứa passwordHash trong đối tượng đưa vào session ở bản triển khai sau.
-- Session `cart`: `java.util.List<com.techgear.model.CartItem>`; chưa triển khai lưu, tải hoặc đồng bộ với DB.
-- Roles: `ADMIN`, `CUSTOMER`, tra qua `User.roleId` → `Roles.roleName`.
-- Trạng thái đơn: `PENDING`, `CONFIRMED`, `SHIPPING`, `DELIVERED`, `CANCELLED`; chưa có logic chuyển trạng thái.
-- Request/response dùng UTF-8, URL luôn ghép context path; JSP nằm trong WEB-INF.
-- Query parameter cho giai đoạn sau: `id` (product-detail), `keyword` (search). Chưa đọc/xử lý ở skeleton.
-- Tham số POST, phân trang, lỗi validation và response JSON cho Chart.js cần thống nhất trước khi triển khai.
-- `admin/product-form.jsp` được tạo sẵn; luồng add/edit trên `/admin/products` vẫn TODO.
-- Các filter xác thực và quyền admin hiện chỉ pass-through; chưa bảo vệ route.
-- DAO trả empty/null/false/0 chỉ để biên dịch; không dùng để kết luận nghiệp vụ. `insertOrder` dự kiến trả identity > 0 sau khi triển khai.
-- Statistics: khoảng thời gian UTC `[fromInclusive, toExclusive)`; doanh thu theo đơn DELIVERED là quy ước dự kiến, chưa truy vấn.
-- Checkout cần dùng một transaction JDBC chung cho Orders, OrderDetails và tồn kho; thiết kế API transaction phải được cả nhóm thống nhất trước khi code.
+Session `currentUser`: User không chứa passwordHash; session `roleName`: tên role tra từ DB.
+Filter nạp lại user/role từ DB trên mỗi request được bảo vệ, nên khóa/đổi quyền có hiệu lực
+trên request tiếp theo. Không cache quyền lấy từ form. UserDAO/RoleDAO báo lỗi JDBC bằng SQLException.
+Các query lấy chi tiết user có hash chỉ dùng cho xác thực phía server; danh sách JSP loại bỏ hash.
+Username không thay đổi sau khi tạo; tài khoản không bị xóa vật lý để giữ lịch sử đơn hàng.
+Không cho ADMIN tự khóa/hạ quyền; DAO dùng transaction và khóa khi bảo vệ ADMIN cuối cùng.
+Đổi mật khẩu đăng xuất session hiện tại; các session khác của cùng user chưa bị thu hồi tự động.
+Chưa có chức năng quên/reset mật khẩu (đã bỏ route và JSP theo yêu cầu).
+
+## Module Người 2 và Người 3
+
+Các Servlet Home/Product/Search/Cart/Checkout/MyOrders/Admin sản phẩm, đơn hàng và thống kê
+vẫn là skeleton: GET forward JSP, POST trả 501. Đợt này không sửa logic của các module đó.
+AuthenticationFilter bảo vệ `/profile`, `/change-password`, `/checkout`, `/my-orders`, `/admin/*`;
+AdminFilter bảo vệ `/admin/*` theo mapping đã có.
+CSRF filter chỉ ánh xạ form Người 1. Khi triển khai module khác, các thành viên phải tự tích hợp CSRF.
+Session `cart` vẫn là contract dự kiến `List<CartItem>`, chưa triển khai.

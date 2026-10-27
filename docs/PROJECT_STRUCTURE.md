@@ -1,14 +1,14 @@
 # Project structure và danh sách file
 
-Luồng dự kiến: browser → filter → servlet → DAO → JDBC → SQL Server;
-servlet forward JSP trong WEB-INF. Skeleton chỉ forward view, chưa gọi DAO.
+Luồng Người 1 đã triển khai: browser → filter → servlet → DAO → JDBC → SQL Server;
+Servlet forward JSP trong WEB-INF hoặc redirect sau khi POST thành công.
 
-`config`: cấu hình kết nối; `model`: JavaBeans khớp SQL; `dao`: signature TODO;
-`controller`: servlet mapping theo contract; `filter`: UTF-8 và security TODO;
-`util`: hàm tiện ích TODO. `webapp/assets`: CSS/JS comment và thư mục ảnh rỗng.
-
-Không bổ sung module nghiệp vụ hoặc dependency ngoài yêu cầu. PROJECT_STRUCTURE.md
-đồng thời là danh sách bàn giao đầy đủ, gồm cả file ẩn. Các thư mục được suy ra từ đường dẫn.
+`config`: cấu hình kết nối môi trường; `model`: JavaBeans; `dao`: JDBC User/Role;
+`controller`: xử lý Login/Register/Logout/Change Password/Profile/Admin Users;
+`filter`: UTF-8, session, quyền ADMIN và CSRF cho Người 1;
+`util`: BCrypt, validation, form/session helper. CSS/JS/font Người 1 độc lập.
+Module Người 2/3 vẫn là skeleton; chưa triển khai Product/Cart/Order.
+Chi tiết chạy và kiểm thử: `docs/PERSON1_TESTING.md`.
 
 ```text
 .env.example
@@ -29,11 +29,9 @@ src/main/java/com/techgear/controller/admin/OrderManagementServlet.java
 src/main/java/com/techgear/controller/admin/ProductManagementServlet.java
 src/main/java/com/techgear/controller/admin/UserManagementServlet.java
 src/main/java/com/techgear/controller/auth/ChangePasswordServlet.java
-src/main/java/com/techgear/controller/auth/ForgotPasswordServlet.java
 src/main/java/com/techgear/controller/auth/LoginServlet.java
 src/main/java/com/techgear/controller/auth/LogoutServlet.java
 src/main/java/com/techgear/controller/auth/RegisterServlet.java
-src/main/java/com/techgear/controller/auth/ResetPasswordServlet.java
 src/main/java/com/techgear/controller/cart/CartServlet.java
 src/main/java/com/techgear/controller/cart/CheckoutServlet.java
 src/main/java/com/techgear/controller/product/HomeServlet.java
@@ -76,10 +74,8 @@ src/main/webapp/WEB-INF/views/admin/product-form.jsp
 src/main/webapp/WEB-INF/views/admin/products.jsp
 src/main/webapp/WEB-INF/views/admin/users.jsp
 src/main/webapp/WEB-INF/views/auth/change-password.jsp
-src/main/webapp/WEB-INF/views/auth/forgot-password.jsp
 src/main/webapp/WEB-INF/views/auth/login.jsp
 src/main/webapp/WEB-INF/views/auth/register.jsp
-src/main/webapp/WEB-INF/views/auth/reset-password.jsp
 src/main/webapp/WEB-INF/views/cart/cart.jsp
 src/main/webapp/WEB-INF/views/cart/checkout.jsp
 src/main/webapp/WEB-INF/views/common/footer.jsp
@@ -104,4 +100,15 @@ src/main/webapp/assets/js/cart.js
 src/main/webapp/assets/js/main.js
 src/main/webapp/assets/js/product.js
 src/main/webapp/index.jsp
+database/TechGear_Full_Setup.sql
+docs/PERSON1_TESTING.md
+src/main/java/com/techgear/filter/CsrfFilter.java
+src/main/java/com/techgear/util/AuthUtil.java
+src/main/webapp/WEB-INF/views/auth/_figma-start.jspf
+src/main/webapp/WEB-INF/views/auth/_figma-end.jspf
+src/main/webapp/WEB-INF/views/auth/_figma-messages.jspf
+src/main/webapp/WEB-INF/views/auth/_figma-visual.jspf
+src/main/webapp/assets/js/auth.js
+src/main/webapp/assets/fonts/inter/Inter-variable.ttf
+src/main/webapp/assets/fonts/inter/OFL.txt
 ```

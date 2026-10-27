@@ -1,0 +1,7 @@
+<%@ page pageEncoding="UTF-8" %>
+<c:if test="${not empty error}">
+    <div class="tg-notice tg-notice-error" role="alert" tabindex="-1" data-backend-error><c:out value="${error}"/></div>
+</c:if>
+<c:if test="${not empty success}">
+    <div class="tg-notice tg-notice-success" role="status"><c:out value="${success}"/></div>
+</c:if>

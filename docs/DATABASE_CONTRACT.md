@@ -7,7 +7,9 @@ Schema `dbo`; identity INT là khóa chính. Java `int` ↔ INT, `boolean` ↔ B
 DATETIME2 lưu UTC theo quy ước; JDBC cần giữ quy ước này khi đọc/ghi.
 Các cột NULL dùng kiểu tham chiếu Java và có thể nhận null.
 
-Không có dữ liệu khởi tạo, kể cả ADMIN/CUSTOMER trong Roles.
+Nguồn đang dùng: `database/TechGear_Full_Setup.sql`, database `TechGearDB_Local`.
+Có hai role ADMIN/CUSTOMER, sáu user demo, 40 sản phẩm.
+`schema.sql` là bản khung cũ, không chạy kèm setup mới.
 FK mặc định NO ACTION: không xóa dây chuyền lịch sử đơn hàng.
 Tên field Java trùng tên cột SQL. Giá trị mặc định SQL chỉ áp dụng khi INSERT bỏ qua cột;
 constructor Java không tự áp dụng default SQL.
@@ -25,6 +27,7 @@ constructor Java không tự áp dụng default SQL.
 | --- | --- | --- |
 | userId | int | INT IDENTITY(1,1) PRIMARY KEY |
 | roleId | int | INT NOT NULL REFERENCES dbo.Roles(roleId) |
+| username | String | NVARCHAR(30) NOT NULL UNIQUE; độ dài sau trim 4–30 |
 | fullName | String | NVARCHAR(100) NOT NULL |
 | email | String | NVARCHAR(254) NOT NULL UNIQUE |
 | passwordHash | String | NVARCHAR(255) NOT NULL |
@@ -51,6 +54,9 @@ constructor Java không tự áp dụng default SQL.
 
 ## Products (`Product`)
 
+Setup mới lưu ảnh tại `Products.imageUrl NVARCHAR(500) NULL`.
+Model/DAO sản phẩm vẫn là khung cũ, Người 2 cần đồng bộ khi triển khai.
+
 | Cột | Java | SQL / PK / FK / constraint |
 | --- | --- | --- |
 | productId | int | INT IDENTITY(1,1) PRIMARY KEY |
@@ -63,7 +69,7 @@ constructor Java không tự áp dụng default SQL.
 | active | boolean | BIT NOT NULL DEFAULT 1 |
 | createdAt | LocalDateTime | DATETIME2 NOT NULL DEFAULT SYSUTCDATETIME() |
 
-## ProductImages (`ProductImage`)
+## ProductImages (`ProductImage`) — chỉ có trong schema cũ, không có trong setup mới
 
 | Cột | Java | SQL / PK / FK / constraint |
 | --- | --- | --- |
@@ -83,7 +89,7 @@ constructor Java không tự áp dụng default SQL.
 | phone | String | NVARCHAR(20) NOT NULL |
 | totalAmount | BigDecimal | DECIMAL(18,2) NOT NULL CHECK (totalAmount >= 0) |
 | status | String | NVARCHAR(20) NOT NULL DEFAULT N'PENDING' CHECK (status IN (N'PENDING', N'CONFIRMED', N'SHIPPING', N'DELIVERED', N'CANCELLED')) |
-| paymentMethod | String | NVARCHAR(50) NOT NULL |
+| paymentMethod | String | NVARCHAR(50) NOT NULL; setup mới CHECK chỉ COD |
 | createdAt | LocalDateTime | DATETIME2 NOT NULL DEFAULT SYSUTCDATETIME() |
 
 ## OrderDetails (`OrderDetail`)
@@ -98,7 +104,7 @@ constructor Java không tự áp dụng default SQL.
 
 Unique: `orderId, productId`.
 
-## CartItems (`CartItem`)
+## CartItems (`CartItem`) — chỉ có trong schema cũ, không có trong setup mới
 
 | Cột | Java | SQL / PK / FK / constraint |
 | --- | --- | --- |
@@ -109,7 +115,7 @@ Unique: `orderId, productId`.
 
 Unique: `userId, productId`.
 
-## Reviews (`Review`)
+## Reviews (`Review`) — chỉ có trong schema cũ, không có trong setup mới
 
 | Cột | Java | SQL / PK / FK / constraint |
 | --- | --- | --- |
@@ -139,7 +145,18 @@ CHECK `expiresAt > createdAt`. Lưu hash token, không lưu token thô.
 
 - `OrderDetails.unitPrice` là giá tại thời điểm đặt hàng; `Orders` lưu địa chỉ/người nhận tại thời điểm đặt.
 - Thanh toán hiện chỉ có cột phương thức và tổng tiền; giao dịch checkout/stock phải được thiết kế và thống nhất sau.
-- Mỗi user có tối đa một review cho một product; chưa triển khai kiểm tra quyền đánh giá.
-- `CartItems` hỗ trợ giỏ hàng lưu DB; session `cart` dùng `List<CartItem>`. Chưa đồng bộ hai nơi.
+- Reviews chỉ có trong schema cũ; setup mới không hỗ trợ bảng đánh giá.
+- Setup mới không có CartItems; dự kiến dùng session `cart` kiểu `List<CartItem>`, Người 3 triển khai.
 - Giá dùng một đơn vị tiền tệ do cả nhóm thống nhất trước khi viết nghiệp vụ.
 - Đổi schema phải đi cùng cập nhật model, DAO signature và contract trong cùng PR.
+
+## Quy tắc Người 1
+
+- User.username đã thêm vào model, giữ constructor cũ và bổ sung constructor có username.
+- Java int ↔ INT, String ↔ NVARCHAR, boolean ↔ BIT; Timestamp.toLocalDateTime ↔ DATETIME2 (UTC).
+- INSERT bỏ userId/active/createdAt để SQL Server sinh identity và dùng default.
+- Database UNIQUE bảo vệ username/email kể cả khi hai request đăng ký đồng thời.
+- Validation Java dùng username `[A-Za-z0-9_.-]{4,30}`, email tối đa 254, password từ 8 ký tự/tối đa 72 byte UTF-8.
+- Mật khẩu hash BCrypt cost 10. Không đưa hash vào session hoặc danh sách JSP.
+- Chỉ Register tra role CUSTOMER; roleId gửi từ client không được dùng trong đăng ký.
+- Không thay đổi cấu trúc SQL trong đợt triển khai Java này.
