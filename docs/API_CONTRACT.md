@@ -26,8 +26,9 @@ Chưa có chức năng quên/reset mật khẩu (đã bỏ route và JSP theo y�
 
 ## Module Người 2 và Người 3
 
-Các Servlet Home/Product/Search/Cart/Checkout/MyOrders/Admin sản phẩm, đơn hàng và thống kê
-vẫn là skeleton: GET forward JSP, POST trả 501. Đợt này không sửa logic của các module đó.
+Các module ngoài Người 1 do thành viên tương ứng phụ trách. Khi đồng bộ main,
+đã giữ nguyên thay đổi Cart/Checkout và trang danh sách sản phẩm của nhóm.
+Tài liệu này chỉ mô tả endpoint Người 1; xem code module khác để biết trạng thái thực tế.
 AuthenticationFilter bảo vệ `/profile`, `/change-password`, `/checkout`, `/my-orders`, `/admin/*`;
 AdminFilter bảo vệ `/admin/*` theo mapping đã có.
 CSRF filter chỉ ánh xạ form Người 1. Khi triển khai module khác, các thành viên phải tự tích hợp CSRF.

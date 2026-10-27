@@ -7,7 +7,7 @@ Servlet forward JSP trong WEB-INF hoặc redirect sau khi POST thành công.
 `controller`: xử lý Login/Register/Logout/Change Password/Profile/Admin Users;
 `filter`: UTF-8, session, quyền ADMIN và CSRF cho Người 1;
 `util`: BCrypt, validation, form/session helper. CSS/JS/font Người 1 độc lập.
-Module Người 2/3 vẫn là skeleton; chưa triển khai Product/Cart/Order.
+Module Người 2/3 được giữ theo main của nhóm, gồm các thay đổi Cart/Checkout mới.
 Chi tiết chạy và kiểm thử: `docs/PERSON1_TESTING.md`.
 
 ```text
