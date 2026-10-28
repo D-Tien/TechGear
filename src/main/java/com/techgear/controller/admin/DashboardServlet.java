@@ -6,6 +6,8 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import com.techgear.dao.StatisticsDAO;
+import java.time.LocalDateTime;
 
 @WebServlet("/admin/dashboard")
 public class DashboardServlet extends HttpServlet {
@@ -16,14 +18,16 @@ public class DashboardServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        // TODO: Implement request handling; no DAO calls in this skeleton.
+        StatisticsDAO dao=new StatisticsDAO(); LocalDateTime now=LocalDateTime.now();
+        request.setAttribute("revenue",dao.getTotalRevenue(now.withDayOfYear(1).withHour(0).withMinute(0).withSecond(0),now.plusSeconds(1)));
+        request.setAttribute("orderCount",dao.getOrderCount(now.withDayOfYear(1).withHour(0).withMinute(0).withSecond(0),now.plusSeconds(1)));
+        request.setAttribute("customerCount",dao.getCustomerCount()); request.setAttribute("monthlyRevenue",dao.getMonthlyRevenue(now.getYear()));
         request.getRequestDispatcher("/WEB-INF/views/admin/dashboard.jsp").forward(request, response);
     }
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        // TODO: Agree on request parameters and implement this action.
-        response.sendError(HttpServletResponse.SC_NOT_IMPLEMENTED, "TODO: Implement action.");
+        response.sendRedirect(request.getContextPath()+"/admin/dashboard");
     }
 }
