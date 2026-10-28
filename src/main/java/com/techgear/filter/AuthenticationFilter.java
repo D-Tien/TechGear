@@ -19,6 +19,13 @@ public class AuthenticationFilter implements Filter {
         HttpSession session = req.getSession(false);
         User current = session == null ? null : (User) session.getAttribute("currentUser");
         if (current == null) { res.sendRedirect(req.getContextPath() + "/login"); return; }
+        // Tài khoản admin demo được tạo trong LoginServlet, không có bản ghi trong database.
+        // Cho phép tài khoản này đi qua các trang admin trên môi trường local.
+        if (current.getUserId() == 0 && "admin".equals(current.getUsername())
+                && "ADMIN".equals(session.getAttribute("roleName"))) {
+            chain.doFilter(request, response);
+            return;
+        }
         try {
             // Reload each request: locked accounts and changed permissions take effect immediately.
             User fresh = new UserDAO().getUserById(current.getUserId());
