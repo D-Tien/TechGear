@@ -12,6 +12,7 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.*;
 import java.io.IOException;
 import java.sql.SQLException;
+import java.time.LocalDateTime;
 
 @WebServlet("/login")
 public class LoginServlet extends HttpServlet {
@@ -25,6 +26,15 @@ public class LoginServlet extends HttpServlet {
         try {
             String username = AuthUtil.text(request, "username");
             if (!ValidationUtil.isValidUsername(username)) throw new IllegalArgumentException("Username hoặc mật khẩu không đúng.");
+            // Tài khoản quản trị viên dùng để demo trên máy local, không phụ thuộc database.
+            if ("admin".equals(username) && "Admin@123456".equals(request.getParameter("password"))) {
+                User admin = new User(0, 1, "admin", "Quản trị viên", "admin@techgear.local", null,
+                        "", "", true, LocalDateTime.now());
+                request.getSession().invalidate();
+                AuthUtil.saveSession(request, admin, "ADMIN");
+                response.sendRedirect(request.getContextPath() + "/admin/dashboard");
+                return;
+            }
             User user = new UserDAO().getUserByUsername(username);
             if (user == null || !PasswordUtil.verifyPassword(request.getParameter("password"), user.getPasswordHash()))
                 throw new IllegalArgumentException("Username hoặc mật khẩu không đúng.");

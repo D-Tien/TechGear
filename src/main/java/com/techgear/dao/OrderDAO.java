@@ -5,27 +5,21 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.Collections;
+import java.util.ArrayList;
 import java.util.List;
 
 public class OrderDAO {
     public OrderDAO() { }
 
-    public List<Order> getAllOrders() {
-        return Collections.emptyList();
-    }
+    private Order read(ResultSet r) throws SQLException { return new Order(r.getInt("orderId"),r.getInt("userId"),r.getString("recipientName"),r.getString("shippingAddress"),r.getString("phone"),r.getBigDecimal("totalAmount"),r.getString("status"),r.getString("paymentMethod"),r.getTimestamp("createdAt").toLocalDateTime()); }
+    private List<Order> query(String sql,int id,boolean hasId) throws SQLException { List<Order> list=new ArrayList<>(); try(Connection c=com.techgear.config.DBConnection.getConnection();PreparedStatement s=c.prepareStatement(sql)){if(hasId)s.setInt(1,id);try(ResultSet r=s.executeQuery()){while(r.next())list.add(read(r));}} return list; }
+    public List<Order> getAllOrders() throws SQLException { return query("SELECT * FROM dbo.Orders ORDER BY createdAt DESC",0,false); }
 
-    public Order getOrderById(int id) {
-        return null;
-    }
+    public Order getOrderById(int id) throws SQLException { List<Order> list=query("SELECT * FROM dbo.Orders WHERE orderId = ?",id,true); return list.isEmpty()?null:list.get(0); }
 
-    public List<Order> getOrdersByUserId(int userId) {
-        return Collections.emptyList();
-    }
+    public List<Order> getOrdersByUserId(int userId) throws SQLException { return query("SELECT * FROM dbo.Orders WHERE userId = ? ORDER BY createdAt DESC",userId,true); }
 
-    public int insertOrder(Order order) {
-        return 0;
-    }
+    public int insertOrder(Order order) throws SQLException { try(Connection c=com.techgear.config.DBConnection.getConnection()){return insertOrder(c,order);} }
 
     // Checkout passes its connection so this insert shares the stock transaction.
     public int insertOrder(Connection connection, Order order) throws SQLException {
@@ -49,7 +43,5 @@ public class OrderDAO {
         }
     }
 
-    public boolean updateOrderStatus(int orderId, String status) {
-        return false;
-    }
+    public boolean updateOrderStatus(int orderId,String status) throws SQLException { try(Connection c=com.techgear.config.DBConnection.getConnection();PreparedStatement s=c.prepareStatement("UPDATE dbo.Orders SET status=? WHERE orderId=?")){s.setString(1,status);s.setInt(2,orderId);return s.executeUpdate()==1;} }
 }
