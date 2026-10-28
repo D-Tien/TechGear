@@ -1,6 +1,6 @@
-﻿-- TECHGEAR / PRJ301 - FULL LOCAL SQL SERVER SETUP
--- Version: 1.0 | 27/10/2026
--- ONE FILE: creates TechGearDB_Local, 8 tables and 40 illustrative demo products.
+-- TECHGEAR / PRJ301 - FULL LOCAL SQL SERVER SETUP
+-- Version: 2.0 | 27/10/2026
+-- ONE FILE: creates TechGearDB_Local, 8 tables and 15 detailed demo products.
 -- Run in Microsoft SQL Server Management Studio (SSMS) using Execute / F5.
 -- Safe policy: NEVER drops/overwrites an existing schema or existing business data.
 -- If dbo.Roles already exists, STOP with an error rather than silently alter it.
@@ -19,14 +19,12 @@ GO
 USE [TechGearDB_Local];
 GO
 
--- Avoid touching an existing TechGear database or misaligning the Java/DAO contract.
-IF EXISTS (SELECT 1 FROM sys.tables WHERE schema_id = SCHEMA_ID(N'dbo'))
-    THROW 51000, 'Target database already contains dbo tables. Setup only works on an empty DB. Backup and use an approved migration instead.', 1;
-GO
-
 SET XACT_ABORT ON;
 BEGIN TRY
     BEGIN TRANSACTION;
+
+    IF EXISTS (SELECT 1 FROM sys.tables WHERE schema_id = SCHEMA_ID(N'dbo'))
+        THROW 51000, 'Target database already has dbo tables; use a new empty database.', 1;
 
     -- 8 business tables: Roles, Users, PasswordResetTokens, Categories, Brands,
     -- Products, Orders, OrderDetails. Cart is HttpSession; no Reviews/ProductImages.
@@ -81,14 +79,38 @@ BEGIN TRY
         categoryId INT NOT NULL,
         brandId INT NOT NULL,
         productName NVARCHAR(200) NOT NULL,
+        sku NVARCHAR(50) NOT NULL,
+        slug NVARCHAR(280) NOT NULL,
+        shortDescription NVARCHAR(500) NULL,
         description NVARCHAR(MAX) NULL,
+        specifications NVARCHAR(MAX) NULL,
         price DECIMAL(18,2) NOT NULL CONSTRAINT CK_Products_price CHECK (price >= 0),
+        compareAtPrice DECIMAL(18,2) NULL,
         stockQuantity INT NOT NULL CONSTRAINT CK_Products_stock CHECK (stockQuantity >= 0),
-        imageUrl NVARCHAR(500) NULL,
+        warrantyMonths INT NOT NULL CONSTRAINT DF_Products_warranty DEFAULT (12),
+        imageUrl NVARCHAR(1000) NULL,
+        imageGalleryJson NVARCHAR(MAX) NULL,
+        colorsJson NVARCHAR(MAX) NULL,
+        averageRating DECIMAL(2,1) NOT NULL CONSTRAINT DF_Products_rating DEFAULT (0),
+        reviewCount INT NOT NULL CONSTRAINT DF_Products_reviews DEFAULT (0),
+        status NVARCHAR(20) NOT NULL CONSTRAINT DF_Products_status DEFAULT (N'ACTIVE'),
+        isFeatured BIT NOT NULL CONSTRAINT DF_Products_featured DEFAULT (0),
+        isBestSeller BIT NOT NULL CONSTRAINT DF_Products_bestSeller DEFAULT (0),
+        isNewArrival BIT NOT NULL CONSTRAINT DF_Products_newArrival DEFAULT (0),
         active BIT NOT NULL CONSTRAINT DF_Products_active DEFAULT (1),
         createdAt DATETIME2 NOT NULL CONSTRAINT DF_Products_createdAt DEFAULT SYSUTCDATETIME(),
         CONSTRAINT FK_Products_Categories FOREIGN KEY (categoryId) REFERENCES dbo.Categories(categoryId),
-        CONSTRAINT FK_Products_Brands FOREIGN KEY (brandId) REFERENCES dbo.Brands(brandId)
+        CONSTRAINT FK_Products_Brands FOREIGN KEY (brandId) REFERENCES dbo.Brands(brandId),
+        CONSTRAINT UQ_Products_sku UNIQUE (sku),
+        CONSTRAINT UQ_Products_slug UNIQUE (slug),
+        CONSTRAINT CK_Products_compareAtPrice CHECK (compareAtPrice IS NULL OR compareAtPrice >= price),
+        CONSTRAINT CK_Products_warranty CHECK (warrantyMonths >= 0),
+        CONSTRAINT CK_Products_rating CHECK (averageRating BETWEEN 0 AND 5),
+        CONSTRAINT CK_Products_reviewCount CHECK (reviewCount >= 0),
+        CONSTRAINT CK_Products_status CHECK (status IN (N'DRAFT',N'ACTIVE',N'OUT_OF_STOCK',N'DISCONTINUED')),
+        CONSTRAINT CK_Products_specsJson CHECK (specifications IS NULL OR ISJSON(specifications) = 1),
+        CONSTRAINT CK_Products_imagesJson CHECK (imageGalleryJson IS NULL OR ISJSON(imageGalleryJson) = 1),
+        CONSTRAINT CK_Products_colorsJson CHECK (colorsJson IS NULL OR ISJSON(colorsJson) = 1)
     );
 
     CREATE TABLE dbo.Orders (
@@ -168,59 +190,44 @@ BEGIN TRY
     INSERT INTO dbo.Brands(brandName,description) VALUES (N'SteelSeries',N'Thương hiệu thiết bị công nghệ');
     INSERT INTO dbo.Brands(brandName,description) VALUES (N'UGREEN',N'Thương hiệu thiết bị công nghệ');
 
-    -- Demo catalog: use JOIN on category/brand names (never assume identity values).
-    -- The image links deliberately represent CATEGORY imagery and can repeat across SKUs.
-    INSERT INTO dbo.Products(categoryId,brandId,productName,description,price,stockQuantity,imageUrl,createdAt)
-    SELECT c.categoryId,b.brandId,v.productName,
-           N'Dữ liệu minh họa PRJ301 cho ' + v.productName + N'. Vui lòng kiểm tra thông số, giá và ảnh trước khi đăng bán.',
-           v.price,v.stockQuantity,v.imageUrl,
-           DATEADD(DAY,-v.daysAgo,SYSUTCDATETIME())
+    -- Curated 15 products from the supplied 40-product SQL catalog.
+    -- All product specs, comparison prices, ratings, and colors are DEMO data.
+    -- External Unsplash photos are category illustrations, NOT exact SKU photos.
+    INSERT INTO dbo.Products
+        (categoryId, brandId, productName, sku, slug, shortDescription, description,
+         specifications, price, compareAtPrice, stockQuantity, warrantyMonths,
+         imageUrl, imageGalleryJson, colorsJson, averageRating, reviewCount,
+         status, isFeatured, isBestSeller, isNewArrival, active, createdAt)
+    SELECT c.categoryId, b.brandId, v.productName, v.sku, v.slug,
+           v.shortDescription, v.description, v.specifications,
+           v.price, v.compareAtPrice, v.stockQuantity, v.warrantyMonths,
+           v.imageUrl, v.imageGalleryJson, v.colorsJson, v.averageRating,
+           v.reviewCount, N'ACTIVE', v.isFeatured, v.isBestSeller,
+           v.isNewArrival, 1, DATEADD(DAY, -v.daysAgo, SYSUTCDATETIME())
     FROM (VALUES
-        (N'Logitech G Pro X TKL LIGHTSPEED',N'Bàn phím',N'Logitech',CAST(3290000 AS DECIMAL(18,2)),24,N'https://images.unsplash.com/photo-1587829741301-dc798b83add3?auto=format&fit=crop&w=900&q=85',0),
-        (N'Logitech G413 SE',N'Bàn phím',N'Logitech',CAST(1590000 AS DECIMAL(18,2)),38,N'https://images.unsplash.com/photo-1587829741301-dc798b83add3?auto=format&fit=crop&w=900&q=85',7),
-        (N'Logitech MX Keys S',N'Bàn phím',N'Logitech',CAST(2690000 AS DECIMAL(18,2)),19,N'https://images.unsplash.com/photo-1587829741301-dc798b83add3?auto=format&fit=crop&w=900&q=85',14),
-        (N'Razer BlackWidow V4 X',N'Bàn phím',N'Razer',CAST(2990000 AS DECIMAL(18,2)),30,N'https://images.unsplash.com/photo-1587829741301-dc798b83add3?auto=format&fit=crop&w=900&q=85',21),
-        (N'Razer Huntsman Mini',N'Bàn phím',N'Razer',CAST(2390000 AS DECIMAL(18,2)),18,N'https://images.unsplash.com/photo-1587829741301-dc798b83add3?auto=format&fit=crop&w=900&q=85',28),
-        (N'Corsair K70 RGB Pro',N'Bàn phím',N'Corsair',CAST(3490000 AS DECIMAL(18,2)),14,N'https://images.unsplash.com/photo-1587829741301-dc798b83add3?auto=format&fit=crop&w=900&q=85',35),
-        (N'Keychron K2 Pro',N'Bàn phím',N'Keychron',CAST(2190000 AS DECIMAL(18,2)),42,N'https://images.unsplash.com/photo-1587829741301-dc798b83add3?auto=format&fit=crop&w=900&q=85',42),
-        (N'Keychron K8 Pro',N'Bàn phím',N'Keychron',CAST(2490000 AS DECIMAL(18,2)),27,N'https://images.unsplash.com/photo-1587829741301-dc798b83add3?auto=format&fit=crop&w=900&q=85',49),
-        (N'Logitech G502 HERO',N'Chuột',N'Logitech',CAST(990000 AS DECIMAL(18,2)),58,N'https://images.unsplash.com/photo-1527814050087-3793815479db?auto=format&fit=crop&w=900&q=85',56),
-        (N'Logitech G304 LIGHTSPEED',N'Chuột',N'Logitech',CAST(790000 AS DECIMAL(18,2)),66,N'https://images.unsplash.com/photo-1527814050087-3793815479db?auto=format&fit=crop&w=900&q=85',63),
-        (N'Logitech MX Master 3S',N'Chuột',N'Logitech',CAST(2490000 AS DECIMAL(18,2)),37,N'https://images.unsplash.com/photo-1527814050087-3793815479db?auto=format&fit=crop&w=900&q=85',70),
-        (N'Razer DeathAdder V3',N'Chuột',N'Razer',CAST(1790000 AS DECIMAL(18,2)),35,N'https://images.unsplash.com/photo-1527814050087-3793815479db?auto=format&fit=crop&w=900&q=85',77),
-        (N'Razer Viper V3 HyperSpeed',N'Chuột',N'Razer',CAST(1890000 AS DECIMAL(18,2)),28,N'https://images.unsplash.com/photo-1527814050087-3793815479db?auto=format&fit=crop&w=900&q=85',84),
-        (N'Razer Basilisk V3',N'Chuột',N'Razer',CAST(1490000 AS DECIMAL(18,2)),43,N'https://images.unsplash.com/photo-1527814050087-3793815479db?auto=format&fit=crop&w=900&q=85',91),
-        (N'SteelSeries Rival 3',N'Chuột',N'SteelSeries',CAST(890000 AS DECIMAL(18,2)),39,N'https://images.unsplash.com/photo-1527814050087-3793815479db?auto=format&fit=crop&w=900&q=85',98),
-        (N'HyperX Cloud III',N'Tai nghe',N'HyperX',CAST(2190000 AS DECIMAL(18,2)),31,N'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&w=900&q=85',105),
-        (N'HyperX Cloud Alpha',N'Tai nghe',N'HyperX',CAST(1890000 AS DECIMAL(18,2)),25,N'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&w=900&q=85',112),
-        (N'Razer BlackShark V2 X',N'Tai nghe',N'Razer',CAST(1190000 AS DECIMAL(18,2)),46,N'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&w=900&q=85',119),
-        (N'Razer Barracuda X',N'Tai nghe',N'Razer',CAST(2490000 AS DECIMAL(18,2)),22,N'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&w=900&q=85',126),
-        (N'Logitech G435 LIGHTSPEED',N'Tai nghe',N'Logitech',CAST(1490000 AS DECIMAL(18,2)),50,N'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&w=900&q=85',133),
-        (N'Sony WH-1000XM5',N'Tai nghe',N'Sony',CAST(7490000 AS DECIMAL(18,2)),15,N'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&w=900&q=85',140),
-        (N'Sony WH-CH720N',N'Tai nghe',N'Sony',CAST(2790000 AS DECIMAL(18,2)),24,N'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&w=900&q=85',147),
-        (N'Corsair HS80 RGB USB',N'Tai nghe',N'Corsair',CAST(2190000 AS DECIMAL(18,2)),19,N'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&w=900&q=85',4),
-        (N'Dell P2422H 24 inch',N'Màn hình',N'Dell',CAST(4190000 AS DECIMAL(18,2)),20,N'https://images.unsplash.com/photo-1527443224154-c4a3942d3acf?auto=format&fit=crop&w=900&q=85',11),
-        (N'Dell S2722QC 27 inch',N'Màn hình',N'Dell',CAST(7990000 AS DECIMAL(18,2)),12,N'https://images.unsplash.com/photo-1527443224154-c4a3942d3acf?auto=format&fit=crop&w=900&q=85',18),
-        (N'LG UltraGear 27GR75Q 27 inch',N'Màn hình',N'LG',CAST(6890000 AS DECIMAL(18,2)),17,N'https://images.unsplash.com/photo-1527443224154-c4a3942d3acf?auto=format&fit=crop&w=900&q=85',25),
-        (N'LG 24MP400 24 inch',N'Màn hình',N'LG',CAST(2590000 AS DECIMAL(18,2)),32,N'https://images.unsplash.com/photo-1527443224154-c4a3942d3acf?auto=format&fit=crop&w=900&q=85',32),
-        (N'ASUS TUF Gaming VG249Q3A',N'Màn hình',N'ASUS',CAST(3790000 AS DECIMAL(18,2)),26,N'https://images.unsplash.com/photo-1527443224154-c4a3942d3acf?auto=format&fit=crop&w=900&q=85',39),
-        (N'Samsung Odyssey G5 27 inch',N'Màn hình',N'Samsung',CAST(5990000 AS DECIMAL(18,2)),18,N'https://images.unsplash.com/photo-1527443224154-c4a3942d3acf?auto=format&fit=crop&w=900&q=85',46),
-        (N'Logitech C920 HD Pro',N'Webcam',N'Logitech',CAST(1590000 AS DECIMAL(18,2)),21,N'https://images.unsplash.com/photo-1587825140708-dfaf72ae4b04?auto=format&fit=crop&w=900&q=85',53),
-        (N'Logitech Brio 500',N'Webcam',N'Logitech',CAST(2690000 AS DECIMAL(18,2)),18,N'https://images.unsplash.com/photo-1587825140708-dfaf72ae4b04?auto=format&fit=crop&w=900&q=85',60),
-        (N'Razer Kiyo X',N'Webcam',N'Razer',CAST(1590000 AS DECIMAL(18,2)),14,N'https://images.unsplash.com/photo-1587825140708-dfaf72ae4b04?auto=format&fit=crop&w=900&q=85',67),
-        (N'Anker 735 Charger 65W',N'Phụ kiện',N'Anker',CAST(1290000 AS DECIMAL(18,2)),64,N'https://images.unsplash.com/photo-1498049794561-7780e7231661?auto=format&fit=crop&w=900&q=85',74),
-        (N'Anker PowerCore 10000',N'Phụ kiện',N'Anker',CAST(890000 AS DECIMAL(18,2)),75,N'https://images.unsplash.com/photo-1498049794561-7780e7231661?auto=format&fit=crop&w=900&q=85',81),
-        (N'UGREEN USB-C Hub 6 in 1',N'Phụ kiện',N'UGREEN',CAST(790000 AS DECIMAL(18,2)),90,N'https://images.unsplash.com/photo-1498049794561-7780e7231661?auto=format&fit=crop&w=900&q=85',88),
-        (N'UGREEN USB-C Cable 100W 2m',N'Phụ kiện',N'UGREEN',CAST(290000 AS DECIMAL(18,2)),110,N'https://images.unsplash.com/photo-1498049794561-7780e7231661?auto=format&fit=crop&w=900&q=85',95),
-        (N'JBL Flip 6',N'Loa',N'JBL',CAST(2890000 AS DECIMAL(18,2)),29,N'https://images.unsplash.com/photo-1608043152269-423dbba4e7e1?auto=format&fit=crop&w=900&q=85',102),
-        (N'JBL Go 3',N'Loa',N'JBL',CAST(890000 AS DECIMAL(18,2)),54,N'https://images.unsplash.com/photo-1608043152269-423dbba4e7e1?auto=format&fit=crop&w=900&q=85',109),
-        (N'Samsung T7 Shield 1TB',N'Ổ cứng',N'Samsung',CAST(2290000 AS DECIMAL(18,2)),24,N'https://images.unsplash.com/photo-1531492746076-161ca9bcad58?auto=format&fit=crop&w=900&q=85',116),
-        (N'Kingston XS1000 1TB',N'Ổ cứng',N'Kingston',CAST(1690000 AS DECIMAL(18,2)),35,N'https://images.unsplash.com/photo-1531492746076-161ca9bcad58?auto=format&fit=crop&w=900&q=85',123)
-    ) v(productName,categoryName,brandName,price,stockQuantity,imageUrl,daysAgo)
-    JOIN dbo.Categories c ON c.categoryName=v.categoryName
-    JOIN dbo.Brands b ON b.brandName=v.brandName;
+        (N'Logitech G Pro X TKL LIGHTSPEED', N'Bàn phím', N'Logitech', N'TG-DEMO-001', N'logitech-g-pro-x-tkl-lightspeed', N'Bàn phím chơi game TKL không dây LIGHTSPEED.', N'Bàn phím không dây dạng tenkeyless, phù hợp góc gaming gọn gàng.', N'{"Kiểu":"TKL","Kết nối":"LIGHTSPEED không dây","Công dụng":"Gaming"}', 3290000, 3790000, 24, 24, N'https://images.unsplash.com/photo-1587829741301-dc798b83add3?auto=format&fit=crop&w=1200&q=85', N'["https://images.unsplash.com/photo-1587829741301-dc798b83add3?auto=format&fit=crop&w=1200&q=85"]', N'[{"name":"Đen","hex":"#111827","stock":14},{"name":"Trắng","hex":"#F8FAFC","stock":10}]', 4.8, 114, 1, 1, 0, 0),
+        (N'Keychron K2 Pro', N'Bàn phím', N'Keychron', N'TG-DEMO-002', N'keychron-k2-pro', N'Bàn phím cơ 75% hỗ trợ tùy chỉnh.', N'Bàn phím cơ gọn gàng dành cho làm việc và lập trình.', N'{"Layout":"75%","Firmware":"QMK/VIA","Kết nối":"Bluetooth / USB-C"}', 2190000, 2490000, 42, 12, N'https://images.unsplash.com/photo-1587829741301-dc798b83add3?auto=format&fit=crop&w=1200&q=85', N'["https://images.unsplash.com/photo-1587829741301-dc798b83add3?auto=format&fit=crop&w=1200&q=85"]', N'[{"name":"Đen","hex":"#1F2937","stock":24},{"name":"Trắng","hex":"#F8FAFC","stock":18}]', 4.7, 72, 1, 0, 1, 42),
+        (N'Logitech G502 HERO', N'Chuột', N'Logitech', N'TG-DEMO-003', N'logitech-g502-hero', N'Chuột gaming có dây với cảm biến HERO.', N'Chuột chơi game nhiều nút tùy chỉnh và độ chính xác cao.', N'{"Kết nối":"USB có dây","Cảm biến":"HERO","Mục đích":"Gaming"}', 990000, 1190000, 58, 12, N'https://images.unsplash.com/photo-1527814050087-3793815479db?auto=format&fit=crop&w=1200&q=85', N'["https://images.unsplash.com/photo-1527814050087-3793815479db?auto=format&fit=crop&w=1200&q=85"]', N'[{"name":"Đen","hex":"#111827","stock":58}]', 4.8, 189, 1, 1, 0, 56),
+        (N'Logitech MX Master 3S', N'Chuột', N'Logitech', N'TG-DEMO-004', N'logitech-mx-master-3s', N'Chuột không dây công thái học dành cho làm việc.', N'Tối ưu năng suất và chuyển đổi giữa nhiều thiết bị.', N'{"DPI":"8000","Kết nối":"Bluetooth / Logi Bolt","Sạc":"USB-C"}', 2490000, 2790000, 37, 12, N'https://images.unsplash.com/photo-1527814050087-3793815479db?auto=format&fit=crop&w=1200&q=85', N'["https://images.unsplash.com/photo-1527814050087-3793815479db?auto=format&fit=crop&w=1200&q=85"]', N'[{"name":"Graphite","hex":"#35393D","stock":22},{"name":"Xám","hex":"#CDD2D5","stock":15}]', 4.9, 318, 1, 1, 0, 70),
+        (N'HyperX Cloud III', N'Tai nghe', N'HyperX', N'TG-DEMO-005', N'hyperx-cloud-iii', N'Tai nghe gaming over-ear với micro.', N'Thiết kế đệm tai thoải mái cho chơi game và họp trực tuyến.', N'{"Loại":"Over-ear","Micro":"Có","Mục đích":"Gaming"}', 2190000, 2490000, 31, 12, N'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&w=1200&q=85', N'["https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&w=1200&q=85"]', N'[{"name":"Đen","hex":"#111827","stock":20},{"name":"Đỏ-Đen","hex":"#BE123C","stock":11}]', 4.7, 95, 1, 0, 0, 105),
+        (N'Sony WH-1000XM5', N'Tai nghe', N'Sony', N'TG-DEMO-006', N'sony-wh-1000xm5', N'Tai nghe chống ồn không dây cao cấp.', N'Âm thanh chi tiết và công nghệ chống ồn, phục vụ giải trí và công việc.', N'{"Kết nối":"Bluetooth","Chống ồn":"ANC","Kiểu":"Over-ear"}', 7490000, 8490000, 15, 12, N'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&w=1200&q=85', N'["https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&w=1200&q=85"]', N'[{"name":"Đen","hex":"#171717","stock":8},{"name":"Bạc","hex":"#D1D5DB","stock":7}]', 4.9, 246, 1, 1, 0, 140),
+        (N'Razer BlackShark V2 X', N'Tai nghe', N'Razer', N'TG-DEMO-007', N'razer-blackshark-v2-x', N'Tai nghe chơi game nhẹ với micro.', N'Dành cho game thủ muốn giao tiếp rõ ràng trong trận đấu.', N'{"Loại":"Gaming headset","Micro":"Có","Kết nối":"Có dây"}', 1190000, 1390000, 46, 12, N'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&w=1200&q=85', N'["https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&w=1200&q=85"]', N'[{"name":"Đen","hex":"#111827","stock":46}]', 4.6, 76, 0, 0, 1, 119),
+        (N'Dell P2422H 24 inch', N'Màn hình', N'Dell', N'TG-DEMO-008', N'dell-p2422h-24-inch', N'Màn hình 24 inch dành cho học tập và văn phòng.', N'Thiết kế tối giản, thuận tiện cho các tác vụ làm việc hằng ngày.', N'{"Kích thước":"24 inch","Độ phân giải":"Full HD","Mục đích":"Văn phòng"}', 4190000, 4590000, 20, 24, N'https://images.unsplash.com/photo-1527443224154-c4a3942d3acf?auto=format&fit=crop&w=1200&q=85', N'["https://images.unsplash.com/photo-1527443224154-c4a3942d3acf?auto=format&fit=crop&w=1200&q=85"]', N'[{"name":"Đen","hex":"#111827","stock":20}]', 4.7, 44, 1, 0, 1, 11),
+        (N'LG UltraGear 27GR75Q 27 inch', N'Màn hình', N'LG', N'TG-DEMO-009', N'lg-ultragear-27gr75q-27-inch', N'Màn hình gaming 27 inch.', N'Không gian hiển thị rộng cho game và nội dung đa phương tiện.', N'{"Kích thước":"27 inch","Độ phân giải":"QHD","Mục đích":"Gaming"}', 6890000, 7290000, 17, 24, N'https://images.unsplash.com/photo-1527443224154-c4a3942d3acf?auto=format&fit=crop&w=1200&q=85', N'["https://images.unsplash.com/photo-1527443224154-c4a3942d3acf?auto=format&fit=crop&w=1200&q=85"]', N'[{"name":"Đen","hex":"#111827","stock":17}]', 4.8, 39, 1, 0, 1, 25),
+        (N'Logitech C920 HD Pro', N'Webcam', N'Logitech', N'TG-DEMO-010', N'logitech-c920-hd-pro', N'Webcam Full HD cho học và họp online.', N'Giải pháp video call gọn nhẹ, phù hợp học trực tuyến và văn phòng.', N'{"Độ phân giải":"1080p","Kết nối":"USB","Mục đích":"Video call"}', 1590000, 1890000, 21, 12, N'https://images.unsplash.com/photo-1587825140708-dfaf72ae4b04?auto=format&fit=crop&w=1200&q=85', N'["https://images.unsplash.com/photo-1587825140708-dfaf72ae4b04?auto=format&fit=crop&w=1200&q=85"]', N'[{"name":"Đen","hex":"#111827","stock":21}]', 4.6, 65, 0, 0, 0, 53),
+        (N'Anker 735 Charger 65W', N'Phụ kiện', N'Anker', N'TG-DEMO-011', N'anker-735-charger-65w', N'Củ sạc nhanh nhiều cổng công suất 65W.', N'Phụ kiện tiện dụng giúp sạc các thiết bị khi di chuyển.', N'{"Công suất":"65W","Công nghệ":"GaN","Loại":"Củ sạc"}', 1290000, 1490000, 64, 18, N'https://images.unsplash.com/photo-1498049794561-7780e7231661?auto=format&fit=crop&w=1200&q=85', N'["https://images.unsplash.com/photo-1498049794561-7780e7231661?auto=format&fit=crop&w=1200&q=85"]', N'[{"name":"Đen","hex":"#111827","stock":32},{"name":"Trắng","hex":"#F8FAFC","stock":32}]', 4.8, 98, 1, 1, 0, 74),
+        (N'UGREEN USB-C Hub 6 in 1', N'Phụ kiện', N'UGREEN', N'TG-DEMO-012', N'ugreen-usb-c-hub-6-in-1', N'Hub USB-C mở rộng cổng cho laptop.', N'Hữu ích khi kết nối chuột, bàn phím, màn hình và các thiết bị ngoại vi.', N'{"Kết nối":"USB-C","Số cổng":"6","Loại":"Hub"}', 790000, 990000, 90, 12, N'https://images.unsplash.com/photo-1498049794561-7780e7231661?auto=format&fit=crop&w=1200&q=85', N'["https://images.unsplash.com/photo-1498049794561-7780e7231661?auto=format&fit=crop&w=1200&q=85"]', N'[{"name":"Xám","hex":"#6B7280","stock":90}]', 4.6, 82, 0, 1, 0, 88),
+        (N'JBL Flip 6', N'Loa', N'JBL', N'TG-DEMO-013', N'jbl-flip-6', N'Loa Bluetooth di động nhỏ gọn.', N'Dễ mang theo khi đi chơi hoặc giải trí tại nhà.', N'{"Kết nối":"Bluetooth","Loại":"Loa di động","Chống nước":"IP67"}', 2890000, 3290000, 29, 12, N'https://images.unsplash.com/photo-1608043152269-423dbba4e7e1?auto=format&fit=crop&w=1200&q=85', N'["https://images.unsplash.com/photo-1608043152269-423dbba4e7e1?auto=format&fit=crop&w=1200&q=85"]', N'[{"name":"Đen","hex":"#111827","stock":17},{"name":"Xanh","hex":"#155DFC","stock":12}]', 4.8, 106, 1, 1, 0, 102),
+        (N'Samsung T7 Shield 1TB', N'Ổ cứng', N'Samsung', N'TG-DEMO-014', N'samsung-t7-shield-1tb', N'SSD di động 1TB, thiết kế bền bỉ.', N'Ổ lưu trữ di động phù hợp sao lưu tài liệu và dữ liệu công việc.', N'{"Dung lượng":"1TB","Loại":"SSD di động","Kết nối":"USB-C"}', 2290000, 2590000, 24, 36, N'https://images.unsplash.com/photo-1531492746076-161ca9bcad58?auto=format&fit=crop&w=1200&q=85', N'["https://images.unsplash.com/photo-1531492746076-161ca9bcad58?auto=format&fit=crop&w=1200&q=85"]', N'[{"name":"Đen","hex":"#111827","stock":14},{"name":"Xanh","hex":"#1D4ED8","stock":10}]', 4.8, 67, 1, 0, 1, 116),
+        (N'Kingston XS1000 1TB', N'Ổ cứng', N'Kingston', N'TG-DEMO-015', N'kingston-xs1000-1tb', N'SSD di động 1TB thiết kế gọn.', N'Giải pháp mở rộng dung lượng và truyền dữ liệu.', N'{"Dung lượng":"1TB","Loại":"SSD di động","Kết nối":"USB"}', 1690000, 1990000, 35, 36, N'https://images.unsplash.com/photo-1531492746076-161ca9bcad58?auto=format&fit=crop&w=1200&q=85', N'["https://images.unsplash.com/photo-1531492746076-161ca9bcad58?auto=format&fit=crop&w=1200&q=85"]', N'[{"name":"Đen","hex":"#111827","stock":35}]', 4.7, 51, 0, 0, 1, 123)
+    ) v(productName,categoryName,brandName,sku,slug,shortDescription,description,
+        specifications,price,compareAtPrice,stockQuantity,warrantyMonths,
+        imageUrl,imageGalleryJson,colorsJson,averageRating,reviewCount,
+        isFeatured,isBestSeller,isNewArrival,daysAgo)
+    JOIN dbo.Categories c ON c.categoryName = v.categoryName
+    JOIN dbo.Brands b ON b.brandName = v.brandName;
 
-    IF (SELECT COUNT_BIG(*) FROM dbo.Products) <> 40
+    IF (SELECT COUNT_BIG(*) FROM dbo.Products) <> 15
         THROW 51001, 'Product seed incomplete; rolling back.', 1;
 
     COMMIT TRANSACTION;

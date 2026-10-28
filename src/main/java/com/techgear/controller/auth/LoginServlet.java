@@ -1,76 +1,43 @@
 package com.techgear.controller.auth;
 
-import com.techgear.config.DBConnection;
+import com.techgear.dao.UserDAO;
+import com.techgear.dao.RoleDAO;
 import com.techgear.model.User;
+import com.techgear.model.Role;
+import com.techgear.util.AuthUtil;
+import com.techgear.util.PasswordUtil;
+import com.techgear.util.ValidationUtil;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
-import jakarta.servlet.http.HttpServlet;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.*;
 import java.io.IOException;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 
 @WebServlet("/login")
 public class LoginServlet extends HttpServlet {
-    private static final long serialVersionUID = 1L;
-    private static final String DEMO_EMAIL = "demo.checkout@techgear.local";
-
     @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        request.setAttribute("demoLoginEnabled", demoLoginEnabled());
+    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         request.getRequestDispatcher("/WEB-INF/views/auth/login.jsp").forward(request, response);
     }
 
     @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        // Temporary local checkout login. Real account login belongs to the auth module.
-        if (!demoLoginEnabled() || !"demo".equals(request.getParameter("action"))) {
-            response.sendError(HttpServletResponse.SC_NOT_IMPLEMENTED, "Đăng nhập thật chưa được triển khai.");
-            return;
-        }
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         try {
-            User user = findDemoUser();
-            if (user == null) {
-                request.setAttribute("error", "Chưa có tài khoản demo trong database. Hãy chạy database/demo_seed.sql.");
-                doGet(request, response);
-                return;
-            }
-            request.getSession().setAttribute("currentUser", user);
-            response.sendRedirect(request.getContextPath() + "/checkout");
-        } catch (SQLException error) {
-            throw new ServletException("Không đọc được tài khoản demo.", error);
-        }
-    }
-
-    private boolean demoLoginEnabled() {
-        return "true".equalsIgnoreCase(System.getenv("TECHGEAR_DEMO_LOGIN"));
-    }
-
-    private User findDemoUser() throws SQLException {
-        String sql = "SELECT userId, roleId, fullName, email, phone, address "
-                + "FROM dbo.Users WHERE email = ? AND active = 1";
-        try (Connection connection = DBConnection.getConnection();
-                PreparedStatement statement = connection.prepareStatement(sql)) {
-            statement.setString(1, DEMO_EMAIL);
-            try (ResultSet result = statement.executeQuery()) {
-                if (!result.next()) {
-                    return null;
-                }
-                User user = new User();
-                user.setUserId(result.getInt("userId"));
-                user.setRoleId(result.getInt("roleId"));
-                user.setFullName(result.getString("fullName"));
-                user.setEmail(result.getString("email"));
-                user.setPhone(result.getString("phone"));
-                user.setAddress(result.getString("address"));
-                user.setActive(true);
-                return user;
-            }
-        }
+            String username = AuthUtil.text(request, "username");
+            if (!ValidationUtil.isValidUsername(username)) throw new IllegalArgumentException("Username hoặc mật khẩu không đúng.");
+            User user = new UserDAO().getUserByUsername(username);
+            if (user == null || !PasswordUtil.verifyPassword(request.getParameter("password"), user.getPasswordHash()))
+                throw new IllegalArgumentException("Username hoặc mật khẩu không đúng.");
+            if (!user.isActive()) throw new IllegalArgumentException("Tài khoản đã bị khóa. Vui lòng liên hệ ADMIN.");
+            Role role = new RoleDAO().getRoleById(user.getRoleId());
+            if (role == null) throw new IllegalArgumentException("Tài khoản chưa được cấu hình vai trò hợp lệ.");
+            request.getSession().invalidate(); // Start a new session after successful login.
+            AuthUtil.saveSession(request, user, role.getRoleName());
+            response.sendRedirect(request.getContextPath() + ("ADMIN".equals(role.getRoleName()) ? "/admin/users" : "/profile"));
+            return;
+        } catch (IllegalArgumentException exception) {
+            response.setStatus(400); request.setAttribute("error", exception.getMessage());
+        } catch (SQLException exception) { AuthUtil.databaseError(request, response, exception); }
+        doGet(request, response);
     }
 }

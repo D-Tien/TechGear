@@ -1,0 +1,25 @@
+<%@ page pageEncoding="UTF-8" %>
+<aside class="tg-auth-visual" aria-label="TechGear">
+    <a class="tg-logo tg-logo-light" href="<c:url value='/home'/>"><img class="tg-brand-image" src="<c:url value='/assets/images/techgear-logo.png?v=5'/>" alt="TechGear" width="2172" height="724"></a>
+    <div class="tg-visual-copy">
+        <c:choose>
+            <c:when test="${authScreen eq 'register'}">
+                <span class="tg-eyebrow">TÀI KHOẢN TECHGEAR</span>
+                <h2>Bắt đầu<br>hành trình.</h2>
+                <p>Tạo tài khoản để lưu giỏ hàng, theo dõi đơn hàng và nhận những ưu đãi dành riêng cho thành viên.</p>
+            </c:when>
+            <c:when test="${authScreen eq 'password'}">
+                <span class="tg-eyebrow">TÀI KHOẢN TECHGEAR</span>
+                <h2>An toàn<br>và tiện lợi.</h2>
+                <p>Cập nhật mật khẩu để bảo vệ tài khoản và yên tâm trải nghiệm cùng TechGear.</p>
+            </c:when>
+            <c:otherwise>
+                <span class="tg-eyebrow">CHÀO MỪNG</span>
+                <h2>Công nghệ<br>đúng chất bạn.</h2>
+                <p>Đăng nhập để khám phá phụ kiện công nghệ chính hãng, ưu đãi riêng và trải nghiệm mua sắm liền mạch.</p>
+            </c:otherwise>
+        </c:choose>
+        <div class="tg-welcome-line" aria-hidden="true"></div>
+    </div>
+    <small class="tg-welcome-footer">CHÍNH HÃNG · GIAO NHANH · BẢO HÀNH TẬN TÂM</small>
+</aside>
