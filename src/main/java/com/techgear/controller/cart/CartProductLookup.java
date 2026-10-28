@@ -1,27 +1,30 @@
 package com.techgear.controller.cart;
 
 import com.techgear.config.DBConnection;
-import java.math.BigDecimal;
+import com.techgear.dao.DemoProductDAO;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-/** Reads products for the cart without changing the catalog module. */
+/** Reads current product data from SQL Server for the cart. */
 public class CartProductLookup {
     public static final int DEMO_PRODUCT_ID = -1;
 
     public CartProduct find(int productId) throws SQLException {
         if (productId == DEMO_PRODUCT_ID) {
-            return new CartProduct(DEMO_PRODUCT_ID, "Razer Huntsman V3 Pro",
-                    new BigDecimal("5990000"), 99,
-                    "/assets/images/razerhuntsmanv3pro.jpg");
+            try (Connection connection = DBConnection.getConnection()) {
+                productId = new DemoProductDAO().findDemoProductId(connection);
+            }
         }
         if (productId <= 0) {
             return null;
         }
 
-        String sql = "SELECT p.productId, p.productName, p.price, p.stockQuantity, p.imageUrl "
+        String sql = "SELECT p.productId, p.productName, p.price, p.stockQuantity, "
+                + "(SELECT TOP 1 imageUrl FROM dbo.ProductImages "
+                + "WHERE productId = p.productId "
+                + "ORDER BY primaryImage DESC, imageId) AS imageUrl "
                 + "FROM dbo.Products p WHERE p.productId = ? AND p.active = 1";
         try (Connection connection = DBConnection.getConnection();
                 PreparedStatement statement = connection.prepareStatement(sql)) {

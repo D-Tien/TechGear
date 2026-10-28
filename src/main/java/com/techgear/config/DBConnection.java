@@ -16,6 +16,11 @@ public final class DBConnection {
                 || password == null || password.isBlank()) {
             throw new SQLException("Configure DB_URL, DB_USER and DB_PASSWORD in the Tomcat environment.");
         }
+        try {
+            Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
+        } catch (ClassNotFoundException error) {
+            throw new SQLException("SQL Server JDBC driver is missing.", error);
+        }
         return DriverManager.getConnection(url, user, password);
     }
 }

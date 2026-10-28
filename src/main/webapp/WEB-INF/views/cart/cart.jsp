@@ -90,12 +90,10 @@
             <a class="btn btn-outline-secondary" href="${pageContext.request.contextPath}/products">Tiếp tục mua sắm</a>
         </div>
         <c:if test="${not empty rows}">
-            <form action="${pageContext.request.contextPath}/checkout" method="post">
-                <button class="btn btn-success" type="submit">Thanh toán</button>
-            </form>
+            <a class="btn btn-success" href="${pageContext.request.contextPath}/checkout">Tiến hành đặt hàng</a>
         </c:if>
         <c:if test="${empty rows}">
-            <button class="btn btn-secondary" type="button" disabled>Thanh toán</button>
+            <button class="btn btn-secondary" type="button" disabled>Tiến hành đặt hàng</button>
         </c:if>
     </div>
 </main>
