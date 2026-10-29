@@ -7,6 +7,9 @@
     <meta name="referrer" content="no-referrer">
     <title><c:out value="${pageTitle}"/> | TechGear</title>
     <link rel="stylesheet" href="<c:url value='/assets/css/auth.css?v=account8'/>">
+    <c:if test="${viewMode eq 'admin'}">
+        <link rel="stylesheet" href="<c:url value='/assets/css/admin.css?v=admin-nav1'/>">
+    </c:if>
     <script src="<c:url value='/assets/js/auth.js?v=figma1'/>" defer></script>
 </head>
 <body class="tg-person1 tg-view-${viewMode}">

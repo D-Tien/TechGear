@@ -1,0 +1,25 @@
+<%@ page pageEncoding="UTF-8" %>
+<aside class="tg-admin-sidebar" aria-label="Điều hướng quản trị">
+    <a class="tg-admin-brand" href="<c:url value='/admin/dashboard'/>">
+        <img class="tg-admin-brand-image" src="<c:url value='/assets/images/techgear-logo.png?v=5'/>" alt="TechGear" width="135" height="45">
+        <small>ADMIN</small>
+    </a>
+
+    <nav class="tg-admin-nav" aria-label="Chức năng quản trị">
+        <a class="tg-admin-nav-link ${adminSection eq 'dashboard' ? 'is-active' : ''}" href="<c:url value='/admin/dashboard'/>"><span aria-hidden="true">▦</span> Tổng quan</a>
+        <a class="tg-admin-nav-link ${adminSection eq 'users' ? 'is-active' : ''}" href="<c:url value='/admin/users'/>"><span aria-hidden="true">♙</span> Người dùng</a>
+        <a class="tg-admin-nav-link ${adminSection eq 'orders' ? 'is-active' : ''}" href="<c:url value='/admin/orders'/>"><span aria-hidden="true">▤</span> Đơn hàng</a>
+        <a class="tg-admin-nav-link ${adminSection eq 'products' ? 'is-active' : ''}" href="<c:url value='/admin/products'/>"><span aria-hidden="true">□</span> Sản phẩm</a>
+        <a class="tg-admin-nav-link ${adminSection eq 'categories' ? 'is-active' : ''}" href="<c:url value='/admin/categories'/>"><span aria-hidden="true">◇</span> Danh mục</a>
+        <a class="tg-admin-nav-link ${adminSection eq 'brands' ? 'is-active' : ''}" href="<c:url value='/admin/brands'/>"><span aria-hidden="true">◆</span> Thương hiệu</a>
+    </nav>
+
+    <div class="tg-admin-sidebar-bottom">
+        <a class="tg-admin-nav-link" href="<c:url value='/home'/>"><span aria-hidden="true">↗</span> Xem cửa hàng</a>
+        <a class="tg-admin-nav-link" href="<c:url value='/profile'/>"><span aria-hidden="true">◉</span> Hồ sơ</a>
+        <form method="post" action="<c:url value='/logout'/>">
+            <input type="hidden" name="csrfToken" value="<c:out value='${sessionScope.csrfToken}'/>">
+            <button class="tg-admin-nav-link tg-admin-logout" type="submit"><span aria-hidden="true">↪</span> Đăng xuất</button>
+        </form>
+    </div>
+</aside>
