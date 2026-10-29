@@ -1,0 +1,11 @@
+﻿GIAO DIEN - CAC FILE NGUOI 3 CAN DOC
+
+src/main/webapp/WEB-INF/views/cart/cart.jsp — giao dien gio hang.
+src/main/webapp/WEB-INF/views/cart/checkout.jsp — giao dien xac nhan va gui don dat hang.
+src/main/webapp/WEB-INF/views/user/my-orders.jsp — trang khach xem lich su don.
+src/main/webapp/WEB-INF/views/admin/orders.jsp — bang admin quan ly don va trang thai.
+src/main/webapp/WEB-INF/views/admin/dashboard.jsp — giao dien thong ke tong quan.
+src/main/webapp/assets/css/cart.css — dinh dang gio hang va checkout.
+src/main/webapp/assets/css/admin.css — dinh dang cac trang quan tri.
+src/main/webapp/assets/js/cart.js — tuong tac trinh duyet tren gio hang.
+src/main/webapp/assets/js/admin.js — tuong tac trinh duyet trong khu vuc admin.

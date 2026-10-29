@@ -10,7 +10,7 @@
     <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/style.css">
     <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/product.css">
 </head>
-<body>
+<body class="tg-product-page">
 <main class="container">
     <h1>Home</h1>
     <!-- TODO: Implement UI -->

@@ -1,0 +1,15 @@
+﻿BACKEND - CAC FILE NGUOI 3 CAN DOC
+
+src/main/java/com/techgear/controller/cart/CartServlet.java — xu ly xem va thay doi gio hang trong session.
+src/main/java/com/techgear/controller/cart/CartProduct.java — du lieu san pham can hien thi trong gio.
+src/main/java/com/techgear/controller/cart/CartProductLookup.java — doc thong tin san pham hien tai tu database.
+src/main/java/com/techgear/controller/cart/CartRow.java — dong du lieu da chuan bi cho trang gio hang.
+src/main/java/com/techgear/controller/cart/CheckoutServlet.java — kiem tra thong tin va dieu phoi dat hang.
+src/main/java/com/techgear/controller/user/MyOrdersServlet.java — lay danh sach don cua khach dang dang nhap.
+src/main/java/com/techgear/controller/admin/OrderManagementServlet.java — hien don va cap nhat trang thai don cho admin.
+src/main/java/com/techgear/controller/admin/DashboardServlet.java — lay so lieu tong quan cho dashboard admin.
+src/main/java/com/techgear/dao/CheckoutOrderDAO.java — tao don, chi tiet don va cap nhat ton kho trong transaction.
+src/main/java/com/techgear/dao/DemoProductDAO.java — tim san pham mau trong database.
+src/main/java/com/techgear/dao/OrderDAO.java — truy van, tao va cap nhat don hang.
+src/main/java/com/techgear/dao/OrderDetailDAO.java — thao tac voi cac dong san pham trong don.
+src/main/java/com/techgear/dao/StatisticsDAO.java — truy van doanh thu va cac so lieu thong ke.

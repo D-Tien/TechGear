@@ -1,0 +1,22 @@
+﻿FILE DUNG CHUNG CAN DOC
+
+src/main/java/com/techgear/config/DBConnection.java — mo ket noi JDBC toi SQL Server.
+src/main/java/com/techgear/model/CartItem.java — du lieu mot san pham trong gio session.
+src/main/java/com/techgear/model/Product.java — thong tin san pham va ton kho.
+src/main/java/com/techgear/model/Order.java — du lieu don hang.
+src/main/java/com/techgear/model/OrderDetail.java — san pham, so luong va gia trong mot don.
+src/main/java/com/techgear/model/User.java — thong tin tai khoan dang dang nhap.
+src/main/java/com/techgear/util/AuthUtil.java — lay tai khoan hien tai tu session/request.
+src/main/java/com/techgear/filter/AuthenticationFilter.java — kiem tra dang nhap tren cac route can bao ve.
+src/main/java/com/techgear/filter/AdminFilter.java — gioi han route danh cho admin.
+src/main/java/com/techgear/filter/CsrfFilter.java — bao ve form POST khoi yeu cau gia mao.
+src/main/java/com/techgear/filter/EncodingFilter.java — dat ma hoa UTF-8 cho request/response.
+src/main/webapp/WEB-INF/web.xml — cau hinh web va dang ky filter.
+database/schema.sql — cau truc bang va lien ket database.
+database/README.md — huong dan tao database va nap schema.
+docs/API_CONTRACT.md — quy uoc URL, session va giao tiep giua cac module.
+docs/DATABASE_CONTRACT.md — quy uoc cot SQL, kieu du lieu va nghiep vu.
+docs/TEAM_GUIDELINES.md — phan cong thanh vien va quy tac lam viec.
+docs/PROJECT_STRUCTURE.md — so do thu muc va vai tro cac module.
+pom.xml — thu vien va cau hinh Maven.
+README.md — gioi thieu va cach chay du an.

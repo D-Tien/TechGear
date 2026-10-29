@@ -9,7 +9,7 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/style.css">
 </head>
-<body>
+<body class="tg-orders-page">
 <main class="container">
     <h1>My Orders</h1>
     <c:choose><c:when test="empty orders"><div class="alert alert-info">Bạn chưa có đơn hàng.</div></c:when><c:otherwise>
