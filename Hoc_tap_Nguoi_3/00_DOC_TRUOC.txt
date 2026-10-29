@@ -1,0 +1,16 @@
+﻿TECHGEAR - NGUOI 3: LO TRINH DOC
+
+Muc tieu: hieu luong gio hang, checkout, don hang va dashboard admin.
+
+Thu tu doc:
+1. README.md va docs/PROJECT_STRUCTURE.md: tong quan du an va cau truc.
+2. docs/TEAM_GUIDELINES.md: pham vi cong viec cua Nguoi 3.
+3. CartItem, Product, Order, OrderDetail, User va DBConnection: du lieu va ket noi DB.
+4. CartServlet -> CartProductLookup -> cart.jsp: luong gio hang.
+5. CheckoutServlet -> CheckoutOrderDAO -> OrderDAO/OrderDetailDAO -> checkout.jsp: luong dat hang.
+6. MyOrdersServlet -> OrderDAO -> my-orders.jsp: khach xem don.
+7. OrderManagementServlet -> OrderDAO -> orders.jsp: admin quan ly don.
+8. DashboardServlet -> StatisticsDAO -> dashboard.jsp: thong ke admin.
+9. Filter va web.xml: dang nhap, quyen va bao ve form.
+
+Cac file khac trong thu muc nay liet ke ten file va noi dung tong quat. Khong sao chep code.

@@ -10,7 +10,7 @@
     <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/style.css">
     <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/admin.css">
 </head>
-<body>
+<body class="tg-admin-page">
 <main class="container">
     <h1>Product Form</h1>
     <!-- TODO: Implement UI -->

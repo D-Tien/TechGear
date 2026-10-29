@@ -10,7 +10,7 @@
     <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/style.css">
     <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/admin.css">
 </head>
-<body>
+<body class="tg-admin-page">
 <main class="container">
     <h1>Order Management</h1>
     <table class="table table-bordered"><thead><tr><th>Mã</th><th>Khách</th><th>Ngày</th><th>Tổng</th><th>Trạng thái</th><th>Cập nhật</th></tr></thead><tbody>

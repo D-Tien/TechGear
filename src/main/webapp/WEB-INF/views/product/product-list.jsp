@@ -9,7 +9,7 @@
     <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/style.css">
     <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/product.css">
 </head>
-<body>
+<body class="tg-product-page">
 <main class="container py-4">
     <h1 class="mb-4">Hàng hóa</h1>
     <div class="card" style="max-width: 400px;">

@@ -1,1 +1,23 @@
-/* TODO: Implement cart styles. */
+.tg-cart-page,.tg-checkout-page { min-height:100vh; background:#f5f7fb; color:#0b1220; font-family:Inter,"TechGear Inter",system-ui,sans-serif; -webkit-font-smoothing:antialiased; }
+.tg-cart-page main.container,.tg-checkout-page main.container { max-width:1160px; padding-top:48px!important; padding-bottom:80px!important; }
+.tg-cart-page h1,.tg-checkout-page h1 { margin:0 0 28px!important; color:#0b1220; font-size:clamp(30px,4vw,42px); font-weight:750; letter-spacing:-1.4px; }
+.tg-cart-page .table,.tg-checkout-page .table { margin-bottom:22px; border:1px solid #e5eaf1; border-collapse:separate; border-spacing:0; border-radius:14px; overflow:hidden; background:#fff; box-shadow:0 10px 30px rgba(11,18,32,.05); vertical-align:middle; }
+.tg-cart-page .table thead th,.tg-checkout-page .table thead th { padding:15px 16px; border-bottom:1px solid #e5eaf1; background:#f8faff; color:#64748b; font-size:11px; font-weight:700; letter-spacing:.05em; text-transform:uppercase; white-space:nowrap; }
+.tg-cart-page .table tbody td,.tg-checkout-page .table tbody td { padding:16px; border-color:#edf0f5; color:#263247; }
+.tg-cart-page .table tbody tr:last-child td,.tg-checkout-page .table tbody tr:last-child td { border-bottom:0; }
+.tg-cart-page .table img { width:76px!important; height:76px; object-fit:contain; padding:6px; border:1px solid #edf0f5; border-radius:10px; background:#fff; }
+.tg-cart-page .table td:first-child { min-width:230px; font-weight:650; }
+.tg-cart-page main > .text-end,.tg-checkout-page main > .text-end { margin:20px 0; padding:18px 20px; border:1px solid #e5eaf1; border-radius:12px; background:#fff; color:#155dfc; }
+.tg-cart-page .btn,.tg-checkout-page .btn { min-height:42px; padding:9px 15px; border-radius:9px; font-weight:650; }
+.tg-cart-page .btn-primary,.tg-checkout-page .btn-primary,.tg-cart-page .btn-success,.tg-checkout-page .btn-success { border-color:#155dfc; background:#155dfc; }
+.tg-cart-page .btn-primary:hover,.tg-checkout-page .btn-primary:hover,.tg-cart-page .btn-success:hover,.tg-checkout-page .btn-success:hover { border-color:#0d4dd9; background:#0d4dd9; }
+.tg-cart-page .btn-outline-primary,.tg-checkout-page .btn-outline-primary { border-color:#d6e1f5; color:#155dfc; background:#fff; }
+.tg-cart-page .btn-outline-danger { border-color:#f2c8cc; color:#c63845; background:#fff; }
+.tg-cart-page .btn:disabled { opacity:.45; }
+.tg-checkout-page form.mt-4 { max-width:760px; margin:28px 0 0!important; padding:28px; border:1px solid #e5eaf1; border-radius:16px; background:#fff; box-shadow:0 10px 30px rgba(11,18,32,.05); }
+.tg-checkout-page .form-label { margin-bottom:7px; color:#273449; font-weight:650; }
+.tg-checkout-page .form-control,.tg-checkout-page textarea.form-control { min-height:46px; border-color:#dce3ed; border-radius:9px; padding:11px 13px; }
+.tg-checkout-page textarea.form-control { min-height:118px; }
+.tg-checkout-page .form-control:focus { border-color:#155dfc; box-shadow:0 0 0 3px #e8efff; }
+.tg-checkout-page .alert { border-radius:11px; }
+@media(max-width:700px) { .tg-cart-page main.container,.tg-checkout-page main.container { padding:30px 16px 58px!important; } .tg-cart-page .table-responsive { border-radius:14px; } .tg-cart-page .table { min-width:720px; } .tg-checkout-page form.mt-4 { padding:20px; } .tg-cart-page main > .d-flex.justify-content-between { align-items:stretch; flex-direction:column; gap:12px; } .tg-cart-page main > .d-flex.justify-content-between > * { width:100%; } .tg-cart-page main > .d-flex.justify-content-between .btn { width:100%; } }

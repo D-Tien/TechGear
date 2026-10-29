@@ -1,0 +1,18 @@
+﻿LICH SU PHAN NGUOI 3
+
+Moc skeleton/Day 1: commit 9a153d7.
+Cac commit lien quan den module Nguoi 3:
+- 4924982: tao ban demo gio hang va checkout.
+- 296ea0b: them thao tac gio hang va san pham mau.
+- 58e8c42, 28516d7: cap nhat cach lay san pham va hinh anh.
+- 94abe09: cap nhat luong checkout va DAO don hang.
+- 968fd70: hoan thien quan ly don va dashboard.
+
+Cac file Nguoi 3 duoc them/sua tu skeleton den hien tai gom:
+- CartServlet, CheckoutServlet, CartProduct, CartProductLookup, CartRow.
+- MyOrdersServlet, OrderManagementServlet, DashboardServlet.
+- CheckoutOrderDAO, DemoProductDAO, OrderDAO, OrderDetailDAO, StatisticsDAO.
+- cart.jsp, checkout.jsp, my-orders.jsp, orders.jsp, dashboard.jsp.
+- cart.css, admin.css, cart.js, admin.js.
+
+Danh sach tren la lich su Git cua repo chung, khong gan moi thay doi cho mot ca nhan. De xem source hien tai, doc cac file trong 01_BACKEND_NGUOI_3.txt va 02_GIAO_DIEN_NGUOI_3.txt.

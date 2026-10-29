@@ -7,8 +7,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Giỏ hàng | TechGear</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/cart.css">
 </head>
-<body>
+<body class="tg-cart-page">
 <main class="container py-4">
     <h1 class="mb-4">Giỏ hàng</h1>
 

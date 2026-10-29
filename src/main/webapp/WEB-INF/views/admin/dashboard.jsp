@@ -10,7 +10,7 @@
     <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/style.css">
     <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/admin.css">
 </head>
-<body>
+<body class="tg-admin-page">
 <main class="container">
     <h1>Dashboard</h1>
     <div class="row g-3"><div class="col-md-4"><div class="card p-3"><h5>Doanh thu</h5><strong>${revenue} đ</strong></div></div><div class="col-md-4"><div class="card p-3"><h5>Đơn hàng</h5><strong>${orderCount}</strong></div></div><div class="col-md-4"><div class="card p-3"><h5>Khách hàng</h5><strong>${customerCount}</strong></div></div></div>

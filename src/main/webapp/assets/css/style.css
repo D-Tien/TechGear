@@ -1,1 +1,14 @@
-/* TODO: Implement style styles. */
+.tg-orders-page { min-height:100vh; background:#f5f7fb; color:#0b1220; font-family:Inter,"TechGear Inter",system-ui,sans-serif; -webkit-font-smoothing:antialiased; }
+.tg-orders-page main.container { max-width:1160px; padding:52px 24px 88px; }
+.tg-orders-page h1 { margin:0 0 28px; color:#0b1220; font-size:clamp(30px,4vw,42px); font-weight:750; letter-spacing:-1.4px; }
+.tg-orders-page .table { overflow:hidden; border:1px solid #e5eaf1; border-collapse:separate; border-spacing:0; border-radius:14px; background:#fff; box-shadow:0 10px 30px rgba(11,18,32,.05); vertical-align:middle; }
+.tg-orders-page .table thead th { padding:15px 18px; border-bottom:1px solid #e5eaf1; background:#f8faff; color:#64748b; font-size:11px; font-weight:700; letter-spacing:.06em; text-transform:uppercase; white-space:nowrap; }
+.tg-orders-page .table tbody td { padding:16px 18px; border-color:#edf0f5; color:#263247; }
+.tg-orders-page .table tbody tr:last-child td { border-bottom:0; }
+.tg-orders-page .table tbody tr:hover { background:#fafcff; }
+.tg-orders-page .alert { padding:18px 20px; border:1px solid #cfe0ff; border-radius:12px; background:#eef4ff; color:#23406d; }
+@media(max-width:650px) { .tg-orders-page main.container { padding:32px 16px 64px; overflow-x:auto; } .tg-orders-page .table { min-width:700px; } .tg-orders-page .table thead th,.tg-orders-page .table tbody td { padding:12px; } }
+.tg-error-page { min-height:100vh; display:grid; place-items:center; padding:24px; background:radial-gradient(circle at 50% 0,#eaf1ff 0,transparent 42%),#f5f7fb; color:#0b1220; font-family:Inter,"TechGear Inter",system-ui,sans-serif; }
+.tg-error-page main.container { width:min(680px,100%); margin:0; padding:56px 36px; border:1px solid #e5eaf1; border-radius:20px; background:#fff; box-shadow:0 18px 50px rgba(11,18,32,.08); text-align:center; }
+.tg-error-page h1 { margin:0; color:#0b1220; font-size:clamp(30px,5vw,44px); font-weight:750; letter-spacing:-1.5px; }
+@media(max-width:520px) { .tg-error-page main.container { padding:42px 22px; } }
