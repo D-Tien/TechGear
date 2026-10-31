@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="referrer" content="no-referrer">
     <title><c:out value="${pageTitle}"/> | TechGear</title>
+    <link rel="stylesheet" href="<c:url value='/assets/css/style.css'/>">
     <link rel="stylesheet" href="<c:url value='/assets/css/auth.css?v=account8'/>">
     <c:if test="${viewMode eq 'admin'}">
         <link rel="stylesheet" href="<c:url value='/assets/css/admin.css?v=admin-nav1'/>">
@@ -14,7 +15,7 @@
 </head>
 <body class="tg-person1 tg-view-${viewMode}">
 <a class="tg-skip" href="#tg-main">Đến nội dung chính</a>
-<c:if test="${viewMode ne 'auth'}">
+<c:if test="${viewMode ne 'auth' and viewMode ne 'admin'}">
     <%@ include file="../common/header.jsp" %>
     <%@ include file="../common/navbar.jsp" %>
 </c:if>

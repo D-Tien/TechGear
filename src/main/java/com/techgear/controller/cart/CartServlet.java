@@ -50,10 +50,11 @@ public class CartServlet extends HttpServlet {
                         item.getQuantity(), product.getStock(),
                         formatPrice(product.getPrice()), formatPrice(lineTotal)));
             }
-        } catch (SQLException error) {
-            throw new ServletException("Không đọc được thông tin sản phẩm trong giỏ.", error);
+        } catch (Exception error) {
+            error.printStackTrace();
         }
 
+        updateCartCount(request.getSession(), cart);
         request.setAttribute("rows", rows);
         request.setAttribute("totalText", formatPrice(total));
         request.getRequestDispatcher("/WEB-INF/views/cart/cart.jsp").forward(request, response);
@@ -109,23 +110,39 @@ public class CartServlet extends HttpServlet {
                             "Sản phẩm chưa có trong giỏ.");
                     return;
                 }
-                int nextQuantity = item == null ? 1 : item.getQuantity() + 1;
+
+                int addQty = 1;
+                String qtyParam = request.getParameter("quantity");
+                if (qtyParam != null && !qtyParam.isBlank()) {
+                    try {
+                        addQty = Math.max(1, Integer.parseInt(qtyParam.trim()));
+                    } catch (NumberFormatException ignored) { }
+                }
+
+                int currentQty = item == null ? 0 : item.getQuantity();
+                int nextQuantity = "increase".equals(action) ? (currentQty + 1) : (currentQty + addQty);
                 if (nextQuantity > MAX_QUANTITY || nextQuantity > product.getStock()) {
-                    response.sendError(HttpServletResponse.SC_CONFLICT,
-                            "Số lượng vượt quá tồn kho.");
-                    return;
+                    nextQuantity = Math.min(MAX_QUANTITY, product.getStock());
                 }
+
                 if (item == null) {
-                    cart.add(new CartItem(0, 0, productId, 1));
+                    cart.add(new CartItem(0, 0, productId, Math.max(1, nextQuantity)));
                 } else {
-                    item.setQuantity(nextQuantity);
+                    item.setQuantity(Math.max(1, nextQuantity));
                 }
-            } catch (SQLException error) {
-                throw new ServletException("Không đọc được thông tin sản phẩm.", error);
+            } catch (Exception error) {
+                error.printStackTrace();
             }
         }
 
-        response.sendRedirect(request.getContextPath() + "/cart");
+        updateCartCount(session, cart);
+
+        String buyNow = request.getParameter("buyNow");
+        if ("true".equalsIgnoreCase(buyNow) || "1".equals(buyNow)) {
+            response.sendRedirect(request.getContextPath() + "/checkout");
+        } else {
+            response.sendRedirect(request.getContextPath() + "/cart");
+        }
     }
 
     @SuppressWarnings("unchecked")
@@ -143,7 +160,18 @@ public class CartServlet extends HttpServlet {
             }
             session.setAttribute("demoCartInitialized", true);
         }
+        updateCartCount(session, cart);
         return cart;
+    }
+
+    private void updateCartCount(HttpSession session, List<CartItem> cart) {
+        int count = 0;
+        if (cart != null) {
+            for (CartItem ci : cart) {
+                count += ci.getQuantity();
+            }
+        }
+        session.setAttribute("cartCount", count);
     }
 
     private CartItem findItem(List<CartItem> cart, int productId) {

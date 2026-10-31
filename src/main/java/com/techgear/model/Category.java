@@ -6,6 +6,7 @@ public class Category {
     private int categoryId;
     private String categoryName;
     private String description;
+    private int productCount;
 
     public Category() { }
 
@@ -13,6 +14,13 @@ public class Category {
         this.categoryId = categoryId;
         this.categoryName = categoryName;
         this.description = description;
+    }
+
+    public Category(int categoryId, String categoryName, String description, int productCount) {
+        this.categoryId = categoryId;
+        this.categoryName = categoryName;
+        this.description = description;
+        this.productCount = productCount;
     }
 
     public int getCategoryId() {
@@ -37,5 +45,13 @@ public class Category {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public int getProductCount() {
+        return productCount;
+    }
+
+    public void setProductCount(int productCount) {
+        this.productCount = productCount;
     }
 }

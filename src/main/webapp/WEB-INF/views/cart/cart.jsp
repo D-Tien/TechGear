@@ -6,10 +6,17 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Giỏ hàng | TechGear</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/style.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/cart.css">
 </head>
 <body class="tg-cart-page">
+<jsp:include page="/WEB-INF/views/common/header.jsp" />
+<jsp:include page="/WEB-INF/views/common/navbar.jsp" />
+
 <main class="container py-4">
     <h1 class="mb-4">Giỏ hàng</h1>
 
@@ -64,39 +71,27 @@
                 </c:forEach>
                 <c:if test="${empty rows}">
                     <tr>
-                        <td colspan="5" class="text-center">Chưa có sản phẩm trong giỏ.</td>
+                        <td colspan="5" class="text-center py-4">Chưa có sản phẩm nào trong giỏ hàng.</td>
                     </tr>
                 </c:if>
             </tbody>
         </table>
     </div>
 
-    <c:if test="${empty rows}">
-        <div class="d-flex align-items-center gap-3 my-3">
-            <img src="${pageContext.request.contextPath}/assets/images/razerhuntsmanv3pro.jpg"
-                 alt="Razer Huntsman V3 Pro" width="120">
-            <div>
-                <div>Razer Huntsman V3 Pro — 5.990.000 đ</div>
-                <form action="${pageContext.request.contextPath}/cart/add" method="post" class="mt-2">
-                    <input type="hidden" name="productId" value="-1">
-                    <button class="btn btn-primary" type="submit">Thêm vào giỏ</button>
-                </form>
-            </div>
-        </div>
-    </c:if>
-
     <p class="text-end fs-5"><strong>Tổng tiền: ${totalText}</strong></p>
     <div class="d-flex justify-content-between">
         <div class="d-flex gap-2">
-            <a class="btn btn-outline-secondary" href="${pageContext.request.contextPath}/products">Tiếp tục mua sắm</a>
+            <a class="btn btn-outline-secondary" href="${pageContext.request.contextPath}/products">← Tiếp tục mua sắm</a>
         </div>
         <c:if test="${not empty rows}">
-            <a class="btn btn-success" href="${pageContext.request.contextPath}/checkout">Tiến hành đặt hàng</a>
+            <a class="btn btn-success" href="${pageContext.request.contextPath}/checkout">Tiến hành đặt hàng →</a>
         </c:if>
         <c:if test="${empty rows}">
-            <button class="btn btn-secondary" type="button" disabled>Tiến hành đặt hàng</button>
+            <button class="btn btn-secondary" type="button" disabled>Tiến hành đặt hàng →</button>
         </c:if>
     </div>
 </main>
+
+<jsp:include page="/WEB-INF/views/common/footer.jsp" />
 </body>
 </html>
