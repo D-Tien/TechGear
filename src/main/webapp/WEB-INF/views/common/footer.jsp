@@ -26,7 +26,7 @@
             <h4>Liên hệ</h4>
             <p>Hotline: 1900 6868<br>
                Email: support@techgear.vn<br>
-               Địa chỉ: Quận 1, TP. Hồ Chí Minh</p>
+               Địa chỉ: FPT University, Hà Nội</p>
         </div>
     </div>
     <div class="copyright">

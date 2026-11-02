@@ -11,7 +11,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>TechGear – Phụ kiện công nghệ cao cấp</title>
     <link rel="stylesheet" href="<c:url value='/assets/css/style.css'/>">
-    <link rel="stylesheet" href="<c:url value='/assets/css/product.css'/>">
+    <link rel="stylesheet" href="<c:url value='/assets/css/product.css'/>?v=20261102-hero-2">
 </head>
 <body>
 
@@ -19,48 +19,15 @@
 <%@ include file="../common/navbar.jsp" %>
 
 <main class="container">
-    <!-- Hero Banner (Matching Figma Mockup) -->
     <section class="hero-banner">
         <div class="hero-content">
-            <span class="hero-kicker">BỘ SƯU TẬP THÁNG 10</span>
-            <h1>Nâng cấp góc làm việc<br>cùng TechGear</h1>
-            <p>Tai nghe • Bàn phím • Chuột • Phụ kiện</p>
-            <a class="hero-btn" href="#products">Khám phá ngay →</a>
+            <span class="hero-kicker">CÔNG NGHỆ MỚI · TRẢI NGHIỆM MỚI</span>
+            <h1>Phụ kiện đỉnh cao.<br>Hiệu suất khác biệt.</h1>
+            <p>Khám phá thiết bị cao cấp được tuyển chọn để hoàn thiện góc làm việc và phong cách sống hiện đại.</p>
+            <a class="hero-btn" href="#products">Khám phá sản phẩm <span aria-hidden="true">→</span></a>
         </div>
         <div class="hero-visual">
-            <svg class="hero-headphone-svg" viewBox="0 0 320 320" fill="none" xmlns="http://www.w3.org/2000/svg" aria-label="Tai nghe cao cấp TechGear">
-                <defs>
-                    <linearGradient id="headbandGrad" x1="60" y1="50" x2="260" y2="50" gradientUnits="userSpaceOnUse">
-                        <stop offset="0%" stop-color="#14274e"/>
-                        <stop offset="50%" stop-color="#21488c"/>
-                        <stop offset="100%" stop-color="#14274e"/>
-                    </linearGradient>
-                    <linearGradient id="cupGrad" x1="0" y1="0" x2="1" y2="1">
-                        <stop offset="0%" stop-color="#3b82f6"/>
-                        <stop offset="100%" stop-color="#1d4ed8"/>
-                    </linearGradient>
-                    <filter id="glowEffect" x="0" y="0" width="320" height="320" filterUnits="userSpaceOnUse">
-                        <feDropShadow dx="0" dy="18" stdDeviation="24" flood-color="#155dfc" flood-opacity="0.38"/>
-                    </filter>
-                </defs>
-                <!-- Outer Arc -->
-                <path d="M 68 190 A 96 96 0 0 1 252 190" fill="none" stroke="url(#headbandGrad)" stroke-width="26" stroke-linecap="round"/>
-                <path d="M 76 180 A 88 88 0 0 1 244 180" fill="none" stroke="#2a4e9b" stroke-width="8" stroke-linecap="round"/>
-                <!-- Left Ear Cup -->
-                <g filter="url(#glowEffect)">
-                    <rect x="52" y="145" width="34" height="92" rx="17" fill="url(#cupGrad)"/>
-                    <rect x="58" y="152" width="22" height="78" rx="11" fill="#1e293b"/>
-                    <path d="M 69 130 L 69 146" stroke="#94a3b8" stroke-width="6" stroke-linecap="round"/>
-                </g>
-                <!-- Right Ear Cup -->
-                <g filter="url(#glowEffect)">
-                    <rect x="234" y="145" width="34" height="92" rx="17" fill="url(#cupGrad)"/>
-                    <rect x="240" y="152" width="22" height="78" rx="11" fill="#1e293b"/>
-                    <path d="M 251 130 L 251 146" stroke="#94a3b8" stroke-width="6" stroke-linecap="round"/>
-                </g>
-                <!-- Cord connector -->
-                <path d="M 86 215 C 100 280, 220 280, 234 215" fill="none" stroke="#38bdf8" stroke-width="3" stroke-dasharray="4 4" opacity="0.6"/>
-            </svg>
+            <img class="hero-image" src="<c:url value='/assets/images/portable-tech-gadgets.jpg'/>" alt="Các phụ kiện công nghệ di động">
         </div>
     </section>
 
@@ -266,10 +233,6 @@
         </div>
     </section>
 
-    <!-- UI Mockup Disclaimer matching the mockup image -->
-    <div class="ui-disclaimer">
-        TECHGEAR • Giao diện chuẩn theo bản thiết kế UI • Dữ liệu và giá hiển thị từ cơ sở dữ liệu
-    </div>
 </main>
 
 <%@ include file="../common/footer.jsp" %>

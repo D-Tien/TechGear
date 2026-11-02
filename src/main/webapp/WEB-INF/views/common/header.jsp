@@ -1,7 +1,6 @@
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <%@ taglib prefix="c" uri="jakarta.tags.core" %>
 <div class="announcement">
-    <span>Miễn phí giao hàng toàn quốc cho đơn từ 500.000₫</span>
     <span>Hỗ trợ 24/7 · 1900 6868</span>
 </div>
 <header class="customer-header">
