@@ -36,20 +36,24 @@ public class ProductDAO {
             p.setCreatedAt(ts.toLocalDateTime());
         }
 
-        // Extended fields
-        p.setSku(rs.getString("sku"));
-        p.setSlug(rs.getString("slug"));
-        p.setShortDescription(rs.getString("shortDescription"));
-        p.setSpecifications(rs.getString("specifications"));
-        p.setCompareAtPrice(rs.getBigDecimal("compareAtPrice"));
-        p.setWarrantyMonths(rs.getInt("warrantyMonths"));
+        // These fields exist only in the extended setup script. The local
+        // TechGearDB_Local database has the basic Products table, so read them
+        // only when the result set contains them.
+        p.setSku(optionalString(rs, "sku"));
+        p.setSlug(optionalString(rs, "slug"));
+        String shortDescription = optionalString(rs, "shortDescription");
+        p.setShortDescription(shortDescription == null ? p.getDescription() : shortDescription);
+        p.setSpecifications(optionalString(rs, "specifications"));
+        p.setCompareAtPrice(optionalBigDecimal(rs, "compareAtPrice"));
+        p.setWarrantyMonths(optionalInt(rs, "warrantyMonths"));
         p.setImageUrl(rs.getString("imageUrl"));
-        p.setAverageRating(rs.getBigDecimal("averageRating"));
-        p.setReviewCount(rs.getInt("reviewCount"));
-        p.setStatus(rs.getString("status"));
-        p.setFeatured(rs.getBoolean("isFeatured"));
-        p.setBestSeller(rs.getBoolean("isBestSeller"));
-        p.setNewArrival(rs.getBoolean("isNewArrival"));
+        p.setAverageRating(optionalBigDecimal(rs, "averageRating"));
+        p.setReviewCount(optionalInt(rs, "reviewCount"));
+        String status = optionalString(rs, "status");
+        p.setStatus(status == null ? (p.isActive() ? "ACTIVE" : "INACTIVE") : status);
+        p.setFeatured(optionalBoolean(rs, "isFeatured"));
+        p.setBestSeller(optionalBoolean(rs, "isBestSeller"));
+        p.setNewArrival(optionalBoolean(rs, "isNewArrival"));
 
         try {
             p.setCategoryName(rs.getString("categoryName"));
@@ -62,12 +66,40 @@ public class ProductDAO {
         return p;
     }
 
+    private String optionalString(ResultSet rs, String column) {
+        try {
+            return rs.getString(column);
+        } catch (SQLException ignored) {
+            return null;
+        }
+    }
+
+    private BigDecimal optionalBigDecimal(ResultSet rs, String column) {
+        try {
+            return rs.getBigDecimal(column);
+        } catch (SQLException ignored) {
+            return null;
+        }
+    }
+
+    private int optionalInt(ResultSet rs, String column) {
+        try {
+            return rs.getInt(column);
+        } catch (SQLException ignored) {
+            return 0;
+        }
+    }
+
+    private boolean optionalBoolean(ResultSet rs, String column) {
+        try {
+            return rs.getBoolean(column);
+        } catch (SQLException ignored) {
+            return false;
+        }
+    }
+
     private static final String SELECT_BASE =
-            "SELECT p.productId, p.categoryId, p.brandId, p.productName, p.sku, p.slug, "
-            + "p.shortDescription, p.description, p.specifications, p.price, p.compareAtPrice, "
-            + "p.stockQuantity, p.warrantyMonths, p.imageUrl, p.averageRating, p.reviewCount, "
-            + "p.status, p.isFeatured, p.isBestSeller, p.isNewArrival, p.active, p.createdAt, "
-            + "c.categoryName, b.brandName "
+            "SELECT p.*, c.categoryName, b.brandName "
             + "FROM dbo.Products p "
             + "LEFT JOIN dbo.Categories c ON c.categoryId = p.categoryId "
             + "LEFT JOIN dbo.Brands b ON b.brandId = p.brandId ";
@@ -89,16 +121,12 @@ public class ProductDAO {
 
     public List<Product> getFeaturedProducts(int limit) {
         List<Product> list = new ArrayList<>();
-        String sql = "SELECT TOP (?) p.productId, p.categoryId, p.brandId, p.productName, p.sku, p.slug, "
-                + "p.shortDescription, p.description, p.specifications, p.price, p.compareAtPrice, "
-                + "p.stockQuantity, p.warrantyMonths, p.imageUrl, p.averageRating, p.reviewCount, "
-                + "p.status, p.isFeatured, p.isBestSeller, p.isNewArrival, p.active, p.createdAt, "
-                + "c.categoryName, b.brandName "
+        String sql = "SELECT TOP (?) p.*, c.categoryName, b.brandName "
                 + "FROM dbo.Products p "
                 + "LEFT JOIN dbo.Categories c ON c.categoryId = p.categoryId "
                 + "LEFT JOIN dbo.Brands b ON b.brandId = p.brandId "
                 + "WHERE p.active = 1 "
-                + "ORDER BY p.isFeatured DESC, p.averageRating DESC, p.productId ASC";
+                + "ORDER BY p.productId DESC";
         try (Connection conn = DBConnection.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setInt(1, limit <= 0 ? 4 : limit);
@@ -115,16 +143,12 @@ public class ProductDAO {
 
     public List<Product> getBestSellers(int limit) {
         List<Product> list = new ArrayList<>();
-        String sql = "SELECT TOP (?) p.productId, p.categoryId, p.brandId, p.productName, p.sku, p.slug, "
-                + "p.shortDescription, p.description, p.specifications, p.price, p.compareAtPrice, "
-                + "p.stockQuantity, p.warrantyMonths, p.imageUrl, p.averageRating, p.reviewCount, "
-                + "p.status, p.isFeatured, p.isBestSeller, p.isNewArrival, p.active, p.createdAt, "
-                + "c.categoryName, b.brandName "
+        String sql = "SELECT TOP (?) p.*, c.categoryName, b.brandName "
                 + "FROM dbo.Products p "
                 + "LEFT JOIN dbo.Categories c ON c.categoryId = p.categoryId "
                 + "LEFT JOIN dbo.Brands b ON b.brandId = p.brandId "
                 + "WHERE p.active = 1 "
-                + "ORDER BY p.isBestSeller DESC, p.reviewCount DESC, p.productId DESC";
+                + "ORDER BY p.productId DESC";
         try (Connection conn = DBConnection.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setInt(1, limit <= 0 ? 4 : limit);
@@ -176,9 +200,8 @@ public class ProductDAO {
             sql.append("AND p.active = 1 ");
         }
         if (keyword != null && !keyword.isBlank()) {
-            sql.append("AND (p.productName LIKE ? OR p.sku LIKE ? OR p.shortDescription LIKE ?) ");
+            sql.append("AND (p.productName LIKE ? OR p.description LIKE ?) ");
             String term = "%" + keyword.trim() + "%";
-            params.add(term);
             params.add(term);
             params.add(term);
         }
@@ -195,8 +218,6 @@ public class ProductDAO {
             sql.append("ORDER BY p.price ASC");
         } else if ("price_desc".equalsIgnoreCase(sortBy)) {
             sql.append("ORDER BY p.price DESC");
-        } else if ("rating".equalsIgnoreCase(sortBy)) {
-            sql.append("ORDER BY p.averageRating DESC");
         } else {
             sql.append("ORDER BY p.productId DESC");
         }
@@ -219,18 +240,14 @@ public class ProductDAO {
 
     public List<Product> getRelatedProducts(int categoryId, int excludeProductId, int limit) {
         List<Product> list = new ArrayList<>();
-        String sql = "SELECT TOP (?) p.productId, p.categoryId, p.brandId, p.productName, p.sku, p.slug, "
-                + "p.shortDescription, p.description, p.specifications, p.price, p.compareAtPrice, "
-                + "p.stockQuantity, p.warrantyMonths, p.imageUrl, p.averageRating, p.reviewCount, "
-                + "p.status, p.isFeatured, p.isBestSeller, p.isNewArrival, p.active, p.createdAt, "
-                + "c.categoryName, b.brandName "
+        String sql = "SELECT TOP (?) p.*, c.categoryName, b.brandName "
                 + "FROM dbo.Products p "
                 + "LEFT JOIN dbo.Categories c ON c.categoryId = p.categoryId "
                 + "LEFT JOIN dbo.Brands b ON b.brandId = p.brandId "
                 + "WHERE p.active = 1 "
                 + (categoryId > 0 ? "AND p.categoryId = ? " : "")
                 + (excludeProductId > 0 ? "AND p.productId <> ? " : "")
-                + "ORDER BY p.isFeatured DESC, p.averageRating DESC, p.productId DESC";
+                + "ORDER BY p.productId DESC";
         try (Connection conn = DBConnection.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
             int idx = 1;
@@ -262,9 +279,8 @@ public class ProductDAO {
             sql.append("AND p.active = 1 ");
         }
         if (keyword != null && !keyword.isBlank()) {
-            sql.append("AND (p.productName LIKE ? OR p.sku LIKE ? OR p.shortDescription LIKE ?) ");
+            sql.append("AND (p.productName LIKE ? OR p.description LIKE ?) ");
             String term = "%" + keyword.trim() + "%";
-            params.add(term);
             params.add(term);
             params.add(term);
         }
@@ -316,9 +332,8 @@ public class ProductDAO {
             sql.append("AND p.active = 1 ");
         }
         if (keyword != null && !keyword.isBlank()) {
-            sql.append("AND (p.productName LIKE ? OR p.sku LIKE ? OR p.shortDescription LIKE ?) ");
+            sql.append("AND (p.productName LIKE ? OR p.description LIKE ?) ");
             String term = "%" + keyword.trim() + "%";
-            params.add(term);
             params.add(term);
             params.add(term);
         }
@@ -346,10 +361,6 @@ public class ProductDAO {
             sql.append("ORDER BY p.price ASC, p.productId DESC ");
         } else if ("price_desc".equalsIgnoreCase(sortBy)) {
             sql.append("ORDER BY p.price DESC, p.productId DESC ");
-        } else if ("rating".equalsIgnoreCase(sortBy)) {
-            sql.append("ORDER BY p.averageRating DESC, p.reviewCount DESC, p.productId DESC ");
-        } else if ("bestseller".equalsIgnoreCase(sortBy)) {
-            sql.append("ORDER BY p.isBestSeller DESC, p.reviewCount DESC, p.productId DESC ");
         } else if ("name_asc".equalsIgnoreCase(sortBy)) {
             sql.append("ORDER BY p.productName ASC, p.productId DESC ");
         } else {
