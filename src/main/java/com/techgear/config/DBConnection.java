@@ -70,13 +70,20 @@ public final class DBConnection {
     }
 
     private static String getEnv(String key, String defaultValue) {
-        String value = System.getenv(key);
-        if (value != null && !value.isBlank()) {
-            return value;
+        // A system property is an explicit per-server override. The project
+        // .env file comes next so a stale environment inherited by Tomcat
+        // cannot silently point this project at another TechGear database.
+        String propertyValue = System.getProperty(key);
+        if (propertyValue != null && !propertyValue.isBlank()) {
+            return propertyValue;
         }
         String envValue = DOT_ENV.get(key);
         if (envValue != null && !envValue.isBlank()) {
             return envValue;
+        }
+        String value = System.getenv(key);
+        if (value != null && !value.isBlank()) {
+            return value;
         }
         return defaultValue;
     }
