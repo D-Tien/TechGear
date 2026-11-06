@@ -393,36 +393,18 @@ public class ProductDAO {
 
     public boolean insertProduct(Product p) {
         String sql = "INSERT INTO dbo.Products "
-                + "(categoryId, brandId, productName, sku, slug, shortDescription, description, specifications, "
-                + "price, compareAtPrice, stockQuantity, warrantyMonths, imageUrl, averageRating, reviewCount, "
-                + "status, isFeatured, isBestSeller, isNewArrival, active, createdAt) "
-                + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, SYSUTCDATETIME())";
+                + "(categoryId, brandId, productName, description, price, stockQuantity, imageUrl, active, createdAt) "
+                + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, SYSUTCDATETIME())";
         try (Connection conn = DBConnection.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             ps.setInt(1, p.getCategoryId());
             ps.setInt(2, p.getBrandId());
             ps.setString(3, p.getProductName());
-            ps.setString(4, p.getSku() != null ? p.getSku() : "TG-" + System.currentTimeMillis() % 10000);
-            ps.setString(5, p.getSlug() != null ? p.getSlug() : "prod-" + System.currentTimeMillis());
-            ps.setString(6, p.getShortDescription());
-            ps.setString(7, p.getDescription());
-            ps.setString(8, p.getSpecifications());
-            ps.setBigDecimal(9, p.getPrice() != null ? p.getPrice() : BigDecimal.ZERO);
-            if (p.getCompareAtPrice() != null) {
-                ps.setBigDecimal(10, p.getCompareAtPrice());
-            } else {
-                ps.setNull(10, Types.DECIMAL);
-            }
-            ps.setInt(11, p.getStockQuantity());
-            ps.setInt(12, p.getWarrantyMonths() > 0 ? p.getWarrantyMonths() : 12);
-            ps.setString(13, p.getImageUrl());
-            ps.setBigDecimal(14, p.getAverageRating() != null ? p.getAverageRating() : BigDecimal.valueOf(5.0));
-            ps.setInt(15, p.getReviewCount());
-            ps.setString(16, p.getStatus() != null ? p.getStatus() : "ACTIVE");
-            ps.setBoolean(17, p.isFeatured());
-            ps.setBoolean(18, p.isBestSeller());
-            ps.setBoolean(19, p.isNewArrival());
-            ps.setBoolean(20, p.isActive());
+            ps.setString(4, p.getDescription());
+            ps.setBigDecimal(5, p.getPrice() != null ? p.getPrice() : BigDecimal.ZERO);
+            ps.setInt(6, p.getStockQuantity());
+            ps.setString(7, p.getImageUrl());
+            ps.setBoolean(8, p.isActive());
 
             int affected = ps.executeUpdate();
             if (affected > 0) {
