@@ -14,7 +14,6 @@ import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.List;
 
 @WebServlet(urlPatterns = {"/products", "/catalog"})
@@ -82,10 +81,10 @@ public class ProductListServlet extends HttpServlet {
         // Fallback for empty database / demo setup so UI never appears broken
         if (products == null || products.isEmpty()) {
             if (totalCount == 0 && (keyword == null || keyword.isEmpty()) && categoryId == null && brandId == null) {
-                products = createMockCatalog();
+                products = DemoProductCatalog.getProducts();
                 totalCount = products.size();
             } else {
-                products = new ArrayList<>();
+                products = java.util.Collections.emptyList();
             }
         }
 
@@ -142,90 +141,4 @@ public class ProductListServlet extends HttpServlet {
         }
     }
 
-    private List<Product> createMockCatalog() {
-        List<Product> list = new ArrayList<>();
-
-        Product p1 = new Product();
-        p1.setProductId(1);
-        p1.setProductName("Tai nghe không dây HyperSound X7 ANC");
-        p1.setCategoryName("Tai nghe");
-        p1.setBrandName("HyperSound");
-        p1.setPrice(new BigDecimal("690000"));
-        p1.setCompareAtPrice(new BigDecimal("890000"));
-        p1.setAverageRating(new BigDecimal("4.8"));
-        p1.setReviewCount(128);
-        p1.setStockQuantity(50);
-        p1.setFeatured(true);
-        p1.setImageUrl("https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&w=700&q=80");
-        list.add(p1);
-
-        Product p2 = new Product();
-        p2.setProductId(2);
-        p2.setProductName("Bàn phím cơ KeyPro K68 Pro Wireless");
-        p2.setCategoryName("Bàn phím cơ");
-        p2.setBrandName("KeyPro");
-        p2.setPrice(new BigDecimal("990000"));
-        p2.setCompareAtPrice(new BigDecimal("1250000"));
-        p2.setAverageRating(new BigDecimal("4.9"));
-        p2.setReviewCount(142);
-        p2.setStockQuantity(35);
-        p2.setFeatured(true);
-        p2.setImageUrl("https://images.unsplash.com/photo-1587829741301-dc798b83add3?auto=format&fit=crop&w=700&q=80");
-        list.add(p2);
-
-        Product p3 = new Product();
-        p3.setProductId(3);
-        p3.setProductName("Chuột chơi game siêu nhẹ Aero M5 Wireless");
-        p3.setCategoryName("Chuột");
-        p3.setBrandName("AeroTech");
-        p3.setPrice(new BigDecimal("459000"));
-        p3.setCompareAtPrice(new BigDecimal("599000"));
-        p3.setAverageRating(new BigDecimal("4.8"));
-        p3.setReviewCount(88);
-        p3.setStockQuantity(40);
-        p3.setBestSeller(true);
-        p3.setImageUrl("https://images.unsplash.com/photo-1527814050087-3793815479db?auto=format&fit=crop&w=700&q=80");
-        list.add(p3);
-
-        Product p4 = new Product();
-        p4.setProductId(4);
-        p4.setProductName("Loa Bluetooth Mini Boom S2 chống nước");
-        p4.setCategoryName("Loa");
-        p4.setBrandName("SoundPulse");
-        p4.setPrice(new BigDecimal("590000"));
-        p4.setCompareAtPrice(new BigDecimal("750000"));
-        p4.setAverageRating(new BigDecimal("4.7"));
-        p4.setReviewCount(76);
-        p4.setStockQuantity(25);
-        p4.setImageUrl("https://images.unsplash.com/photo-1608043152269-423dbba4e7e1?auto=format&fit=crop&w=700&q=80");
-        list.add(p4);
-
-        Product p5 = new Product();
-        p5.setProductId(5);
-        p5.setProductName("Giá treo tai nghe kim loại TechStand Pro");
-        p5.setCategoryName("Phụ kiện");
-        p5.setBrandName("TechGear");
-        p5.setPrice(new BigDecimal("290000"));
-        p5.setCompareAtPrice(new BigDecimal("350000"));
-        p5.setAverageRating(new BigDecimal("4.9"));
-        p5.setReviewCount(65);
-        p5.setStockQuantity(60);
-        p5.setImageUrl("https://images.unsplash.com/photo-1584679109597-c656b19974c9?auto=format&fit=crop&w=700&q=80");
-        list.add(p5);
-
-        Product p6 = new Product();
-        p6.setProductId(6);
-        p6.setProductName("Lót chuột cỡ lớn DeskMat Gaming 900x400");
-        p6.setCategoryName("Phụ kiện");
-        p6.setBrandName("TechGear");
-        p6.setPrice(new BigDecimal("199000"));
-        p6.setCompareAtPrice(new BigDecimal("250000"));
-        p6.setAverageRating(new BigDecimal("4.8"));
-        p6.setReviewCount(110);
-        p6.setStockQuantity(100);
-        p6.setImageUrl("https://images.unsplash.com/photo-1616440347437-b1c73416efc2?auto=format&fit=crop&w=700&q=80");
-        list.add(p6);
-
-        return list;
-    }
 }

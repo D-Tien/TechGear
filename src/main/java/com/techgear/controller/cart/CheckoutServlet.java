@@ -1,7 +1,9 @@
 package com.techgear.controller.cart;
 
 import com.techgear.dao.CheckoutOrderDAO;
+import com.techgear.dao.OrderDAO;
 import com.techgear.model.CartItem;
+import com.techgear.model.Order;
 import com.techgear.model.User;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -13,6 +15,7 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.sql.SQLException;
 import java.text.NumberFormat;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -53,7 +56,7 @@ public class CheckoutServlet extends HttpServlet {
             try {
                 int orderId = orders.placeOrder(user.getUserId(), name, address, phone, cart);
                 cart.clear();
-                session.setAttribute("demoCartInitialized", true);
+                session.setAttribute("cartCount", 0);
                 session.setAttribute("checkoutOrderId", orderId);
                 response.sendRedirect(request.getContextPath() + "/checkout");
                 return;
@@ -72,7 +75,20 @@ public class CheckoutServlet extends HttpServlet {
         HttpSession session = request.getSession(false);
         User user = session == null ? null : (User) session.getAttribute("currentUser");
         if (session != null && session.getAttribute("checkoutOrderId") != null) {
-            request.setAttribute("orderId", session.getAttribute("checkoutOrderId"));
+            int orderId = (Integer) session.getAttribute("checkoutOrderId");
+            request.setAttribute("orderId", orderId);
+            try {
+                Order order = user == null ? null
+                        : new OrderDAO().getOrderByIdAndUserId(orderId, user.getUserId());
+                request.setAttribute("successOrder", order);
+                if (order != null) {
+                    request.setAttribute("successTotalText", formatPrice(order.getTotalAmount()));
+                    request.setAttribute("successDateText", order.getCreatedAt()
+                            .format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
+                }
+            } catch (SQLException error) {
+                throw new ServletException("Không đọc được đơn hàng vừa tạo.", error);
+            }
             session.removeAttribute("checkoutOrderId");
         }
         request.setAttribute("loggedIn", user != null && user.getUserId() > 0);
@@ -94,8 +110,16 @@ public class CheckoutServlet extends HttpServlet {
         boolean canOrder = user != null && user.getUserId() > 0 && !cart.isEmpty();
         try {
             for (CartItem item : cart) {
-                if ((item.getProductId() <= 0 && item.getProductId() != CartProductLookup.DEMO_PRODUCT_ID)
-                        || item.getQuantity() < 1) {
+                if (item.getProductId() <= -101) {
+                    canOrder = false;
+                    if (request.getAttribute("checkoutError") == null) {
+                        request.setAttribute("checkoutError",
+                                "Sản phẩm minh họa không có trong database nên không thể đặt hàng. "
+                                + "Hãy xóa dòng này khỏi giỏ và thêm một sản phẩm đang bán từ database.");
+                    }
+                    continue;
+                }
+                if (item.getProductId() <= 0 || item.getQuantity() < 1) {
                     canOrder = false;
                     if (request.getAttribute("checkoutError") == null) {
                         request.setAttribute("checkoutError", "Sản phẩm trong giỏ không hợp lệ.");
@@ -112,7 +136,11 @@ public class CheckoutServlet extends HttpServlet {
                 }
                 BigDecimal lineTotal = product.getPrice().multiply(BigDecimal.valueOf(item.getQuantity()));
                 total = total.add(lineTotal);
-                rows.add(new CartRow(item.getProductId(), product.getName(), "",
+                String imageUrl = product.getImageUrl() == null ? "" : product.getImageUrl();
+                if (imageUrl.startsWith("/")) {
+                    imageUrl = request.getContextPath() + imageUrl;
+                }
+                rows.add(new CartRow(item.getProductId(), product.getName(), imageUrl,
                         item.getQuantity(), product.getStock(),
                         formatPrice(product.getPrice()), formatPrice(lineTotal)));
             }
@@ -134,7 +162,15 @@ public class CheckoutServlet extends HttpServlet {
         if (session == null || !(session.getAttribute("cart") instanceof List<?>)) {
             return new ArrayList<>();
         }
-        return (List<CartItem>) session.getAttribute("cart");
+        List<CartItem> cart = (List<CartItem>) session.getAttribute("cart");
+        // Remove the automatically inserted sample keyboard from older sessions.
+        cart.removeIf(item -> item.getProductId() == -1);
+        int cartCount = 0;
+        for (CartItem item : cart) {
+            cartCount += item.getQuantity();
+        }
+        session.setAttribute("cartCount", cartCount);
+        return cart;
     }
 
     private String formatPrice(BigDecimal amount) {

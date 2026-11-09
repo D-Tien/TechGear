@@ -31,8 +31,10 @@ public class CheckoutOrderDAO {
 
                 for (CartItem item : cart) {
                     int productId = item.getProductId();
-                    if (productId == -1) {
-                        productId = new DemoProductDAO().findDemoProductId(connection);
+                    if (productId <= -101) {
+                        throw new IllegalArgumentException(
+                                "Sản phẩm minh họa không có trong database nên không thể đặt hàng. "
+                                + "Hãy xóa sản phẩm đó và chọn sản phẩm đang bán trong cửa hàng.");
                     }
                     int quantity = item.getQuantity();
                     if (productId <= 0 || quantity < 1 || quantity > 99

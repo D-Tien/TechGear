@@ -1,6 +1,7 @@
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <%@ taglib prefix="c" uri="jakarta.tags.core" %>
 <%@ taglib prefix="fn" uri="jakarta.tags.functions" %>
+<%@ taglib prefix="fmt" uri="jakarta.tags.fmt" %>
 <c:set var="pageTitle" value="Danh mục"/>
 <c:set var="viewMode" value="admin"/>
 <c:set var="adminSection" value="categories"/>
@@ -54,6 +55,8 @@
                         <th scope="col">Tên danh mục</th>
                         <th scope="col">Mô tả</th>
                         <th scope="col">Số sản phẩm</th>
+                        <th scope="col">% tồn kho</th>
+                        <th scope="col">Doanh thu</th>
                         <th scope="col" style="width: 170px;">Thao tác</th>
                     </tr>
                 </thead>
@@ -72,6 +75,8 @@
                                     <c:out value="${cat.productCount}"/> sản phẩm
                                 </a>
                             </td>
+                            <td><fmt:formatNumber value="${catalogMetrics[cat.categoryId].inventoryPercent}" minFractionDigits="1" maxFractionDigits="1"/>%</td>
+                            <td><strong class="tg-metric-revenue"><fmt:formatNumber value="${catalogMetrics[cat.categoryId].revenue}" type="number" groupingUsed="true"/> đ</strong></td>
                             <td>
                                 <div class="tg-admin-actions">
                                     <button class="tg-row-action" type="button" data-dialog-target="tg-edit-cat-${cat.categoryId}">
@@ -96,7 +101,7 @@
                     </c:forEach>
                     <c:if test="${empty categories}">
                         <tr>
-                            <td colspan="5" class="tg-empty-state">Chưa có danh mục nào hoặc không tìm thấy kết quả.</td>
+                            <td colspan="7" class="tg-empty-state">Chưa có danh mục nào hoặc không tìm thấy kết quả.</td>
                         </tr>
                     </c:if>
                 </tbody>

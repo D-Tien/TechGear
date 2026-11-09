@@ -3,6 +3,7 @@ package com.techgear.controller.admin;
 import com.techgear.dao.BrandDAO;
 import com.techgear.dao.CategoryDAO;
 import com.techgear.dao.ProductDAO;
+import com.techgear.dao.CatalogMetricsDAO;
 import com.techgear.model.Brand;
 import com.techgear.model.Category;
 import com.techgear.model.Product;
@@ -77,6 +78,11 @@ public class ProductManagementServlet extends HttpServlet {
         request.setAttribute("products", products);
         request.setAttribute("categories", categoryDAO.getAllCategories());
         request.setAttribute("brands", brandDAO.getAllBrands());
+        try {
+            request.setAttribute("catalogMetrics", new CatalogMetricsDAO().getProductMetrics());
+        } catch (java.sql.SQLException error) {
+            throw new ServletException("Không đọc được số liệu sản phẩm.", error);
+        }
         request.getRequestDispatcher("/WEB-INF/views/admin/products.jsp").forward(request, response);
     }
 

@@ -18,7 +18,13 @@ public class AuthenticationFilter implements Filter {
         res.setHeader("Cache-Control", "no-store");
         HttpSession session = req.getSession(false);
         User current = session == null ? null : (User) session.getAttribute("currentUser");
-        if (current == null) { res.sendRedirect(req.getContextPath() + "/login"); return; }
+        if (current == null) {
+            if ("/checkout".equals(req.getServletPath())) {
+                req.getSession(true).setAttribute("afterLoginRedirect", "checkout");
+            }
+            res.sendRedirect(req.getContextPath() + "/login");
+            return;
+        }
         // Tài khoản admin demo được tạo trong LoginServlet, không có bản ghi trong database.
         // Cho phép tài khoản này đi qua các trang admin trên môi trường local.
         if (current.getUserId() == 0 && "admin".equals(current.getUsername())

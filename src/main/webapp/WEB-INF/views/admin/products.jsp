@@ -82,6 +82,9 @@
                         <th scope="col">Thương hiệu</th>
                         <th scope="col">Giá bán</th>
                         <th scope="col">Tồn kho</th>
+                        <th scope="col">% tồn kho</th>
+                        <th scope="col">Đã bán</th>
+                        <th scope="col">Doanh thu</th>
                         <th scope="col">Trạng thái</th>
                         <th scope="col" style="width: 170px;">Thao tác</th>
                     </tr>
@@ -122,6 +125,9 @@
                                     </c:otherwise>
                                 </c:choose>
                             </td>
+                            <td><fmt:formatNumber value="${catalogMetrics[p.productId].inventoryPercent}" minFractionDigits="1" maxFractionDigits="1"/>%</td>
+                            <td><fmt:formatNumber value="${catalogMetrics[p.productId].soldQuantity}" groupingUsed="true"/></td>
+                            <td><strong style="color: var(--tg-blue);"><fmt:formatNumber value="${catalogMetrics[p.productId].revenue}" type="number" groupingUsed="true"/> đ</strong></td>
                             <td>
                                 <span class="tg-badge ${p.active ? 'tg-green' : 'tg-red'}">
                                     ${p.active ? 'Đang bán' : 'Ngừng bán'}
@@ -153,7 +159,7 @@
                     </c:forEach>
                     <c:if test="${empty products}">
                         <tr>
-                            <td colspan="7" class="tg-empty-state">Không tìm thấy sản phẩm nào phù hợp với bộ lọc.</td>
+                            <td colspan="10" class="tg-empty-state">Không tìm thấy sản phẩm nào phù hợp với bộ lọc.</td>
                         </tr>
                     </c:if>
                 </tbody>
