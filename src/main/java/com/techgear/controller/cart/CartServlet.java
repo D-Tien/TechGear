@@ -68,7 +68,8 @@ public class CartServlet extends HttpServlet {
             action = "add";
         }
         if (!"add".equals(action) && !"increase".equals(action)
-                && !"decrease".equals(action) && !"remove".equals(action)) {
+                && !"decrease".equals(action) && !"remove".equals(action)
+                && !"setQuantity".equals(action)) {
             response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Thao tác không hợp lệ.");
             return;
         }
@@ -82,10 +83,6 @@ public class CartServlet extends HttpServlet {
         }
 
         HttpSession session = request.getSession();
-        // A direct Add is the first cart action; do not also insert the sample item.
-        if (session.getAttribute("demoCartInitialized") == null) {
-            session.setAttribute("demoCartInitialized", true);
-        }
         List<CartItem> cart = getCart(session);
         CartItem item = findItem(cart, productId);
 
@@ -96,6 +93,30 @@ public class CartServlet extends HttpServlet {
         } else if ("decrease".equals(action)) {
             if (item != null && item.getQuantity() > 1) {
                 item.setQuantity(item.getQuantity() - 1);
+            }
+        } else if ("setQuantity".equals(action)) {
+            if (item == null) {
+                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Sản phẩm chưa có trong giỏ.");
+                return;
+            }
+            int quantity;
+            try {
+                quantity = Integer.parseInt(request.getParameter("quantity"));
+            } catch (NumberFormatException error) {
+                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Số lượng không hợp lệ.");
+                return;
+            }
+            try {
+                CartProduct product = products.find(productId);
+                if (product == null || quantity < 1 || quantity > MAX_QUANTITY
+                        || quantity > product.getStock()) {
+                    response.sendError(HttpServletResponse.SC_CONFLICT,
+                            "Số lượng phải từ 1 đến tồn kho hiện tại của sản phẩm.");
+                    return;
+                }
+                item.setQuantity(quantity);
+            } catch (SQLException error) {
+                throw new ServletException("Không kiểm tra được tồn kho sản phẩm.", error);
             }
         } else {
             try {
@@ -153,13 +174,8 @@ public class CartServlet extends HttpServlet {
             session.setAttribute("cart", cart);
         }
 
-        // Keep the one sample keyboard that was requested for the first visit.
-        if (session.getAttribute("demoCartInitialized") == null) {
-            if (findItem(cart, CartProductLookup.DEMO_PRODUCT_ID) == null) {
-                cart.add(new CartItem(0, 0, CartProductLookup.DEMO_PRODUCT_ID, 1));
-            }
-            session.setAttribute("demoCartInitialized", true);
-        }
+        // Remove the sample keyboard inserted by older versions of this page.
+        cart.removeIf(item -> item.getProductId() == -1);
         updateCartCount(session, cart);
         return cart;
     }

@@ -1,6 +1,7 @@
 package com.techgear.controller.admin;
 
 import com.techgear.dao.CategoryDAO;
+import com.techgear.dao.CatalogMetricsDAO;
 import com.techgear.model.Category;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -30,6 +31,11 @@ public class CategoryManagementServlet extends HttpServlet {
         }
 
         request.setAttribute("categories", categories);
+        try {
+            request.setAttribute("catalogMetrics", new CatalogMetricsDAO().getCategoryMetrics());
+        } catch (java.sql.SQLException error) {
+            throw new ServletException("Không đọc được số liệu danh mục.", error);
+        }
         request.getRequestDispatcher("/WEB-INF/views/admin/categories.jsp").forward(request, response);
     }
 

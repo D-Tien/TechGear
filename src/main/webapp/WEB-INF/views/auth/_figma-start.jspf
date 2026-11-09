@@ -9,7 +9,7 @@
     <link rel="stylesheet" href="<c:url value='/assets/css/style.css'/>">
     <link rel="stylesheet" href="<c:url value='/assets/css/auth.css?v=account8'/>">
     <c:if test="${viewMode eq 'admin'}">
-        <link rel="stylesheet" href="<c:url value='/assets/css/admin.css?v=admin-nav1'/>">
+        <link rel="stylesheet" href="<c:url value='/assets/css/admin.css?v=admin-redesign-20261109'/>">
     </c:if>
     <script src="<c:url value='/assets/js/auth.js?v=figma1'/>" defer></script>
 </head>

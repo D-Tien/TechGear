@@ -4,6 +4,7 @@ import com.techgear.dao.UserDAO;
 import com.techgear.dao.RoleDAO;
 import com.techgear.model.User;
 import com.techgear.model.Role;
+import com.techgear.model.CartItem;
 import com.techgear.util.AuthUtil;
 import com.techgear.util.PasswordUtil;
 import com.techgear.util.ValidationUtil;
@@ -13,6 +14,9 @@ import jakarta.servlet.http.*;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
 
 @WebServlet("/login")
 public class LoginServlet extends HttpServlet {
@@ -32,6 +36,7 @@ public class LoginServlet extends HttpServlet {
                         "", "", true, LocalDateTime.now());
                 request.getSession().invalidate();
                 AuthUtil.saveSession(request, admin, "ADMIN");
+                request.getSession().setAttribute("csrfToken", UUID.randomUUID().toString());
                 response.sendRedirect(request.getContextPath() + "/admin/dashboard");
                 return;
             }
@@ -41,13 +46,54 @@ public class LoginServlet extends HttpServlet {
             if (!user.isActive()) throw new IllegalArgumentException("Tài khoản đã bị khóa. Vui lòng liên hệ ADMIN.");
             Role role = new RoleDAO().getRoleById(user.getRoleId());
             if (role == null) throw new IllegalArgumentException("Tài khoản chưa được cấu hình vai trò hợp lệ.");
-            request.getSession().invalidate(); // Start a new session after successful login.
+            HttpSession oldSession = request.getSession(false);
+            List<CartItem> savedCart = copyCart(oldSession);
+            boolean returnToCheckout = oldSession != null
+                    && "checkout".equals(oldSession.getAttribute("afterLoginRedirect"));
+            if (oldSession != null) {
+                oldSession.invalidate(); // Start a fresh authenticated session.
+            }
             AuthUtil.saveSession(request, user, role.getRoleName());
-            response.sendRedirect(request.getContextPath() + ("ADMIN".equals(role.getRoleName()) ? "/admin/users" : "/profile"));
+            HttpSession newSession = request.getSession();
+            newSession.setAttribute("csrfToken", UUID.randomUUID().toString());
+            newSession.setAttribute("cart", savedCart);
+            int cartCount = 0;
+            for (CartItem item : savedCart) {
+                cartCount += item.getQuantity();
+            }
+            newSession.setAttribute("cartCount", cartCount);
+
+            String destination;
+            if ("ADMIN".equals(role.getRoleName())) {
+                destination = "/admin/users";
+            } else if (returnToCheckout) {
+                destination = "/checkout";
+            } else {
+                destination = "/profile";
+            }
+            response.sendRedirect(request.getContextPath() + destination);
             return;
         } catch (IllegalArgumentException exception) {
             response.setStatus(400); request.setAttribute("error", exception.getMessage());
         } catch (SQLException exception) { AuthUtil.databaseError(request, response, exception); }
         doGet(request, response);
+    }
+
+    private List<CartItem> copyCart(HttpSession session) {
+        if (session == null || !(session.getAttribute("cart") instanceof List<?>)) {
+            return new ArrayList<>();
+        }
+        List<CartItem> savedCart = new ArrayList<>();
+        for (Object value : (List<?>) session.getAttribute("cart")) {
+            if (value instanceof CartItem) {
+                CartItem item = (CartItem) value;
+                // Discard the old automatically inserted sample keyboard.
+                if (item.getProductId() != -1) {
+                    savedCart.add(new CartItem(item.getCartItemId(), item.getUserId(),
+                            item.getProductId(), item.getQuantity()));
+                }
+            }
+        }
+        return savedCart;
     }
 }

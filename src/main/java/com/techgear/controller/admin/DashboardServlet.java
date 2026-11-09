@@ -7,7 +7,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import com.techgear.dao.StatisticsDAO;
-import java.time.LocalDateTime;
 
 @WebServlet("/admin/dashboard")
 public class DashboardServlet extends HttpServlet {
@@ -18,10 +17,14 @@ public class DashboardServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        StatisticsDAO dao=new StatisticsDAO(); LocalDateTime now=LocalDateTime.now();
-        request.setAttribute("revenue",dao.getTotalRevenue(now.withDayOfYear(1).withHour(0).withMinute(0).withSecond(0),now.plusSeconds(1)));
-        request.setAttribute("orderCount",dao.getOrderCount(now.withDayOfYear(1).withHour(0).withMinute(0).withSecond(0),now.plusSeconds(1)));
-        request.setAttribute("customerCount",dao.getCustomerCount()); request.setAttribute("monthlyRevenue",dao.getMonthlyRevenue(now.getYear()));
+        StatisticsDAO dao = new StatisticsDAO();
+        long totalOrders = dao.getAllOrderCount();
+        long completedOrders = dao.getCompletedOrderCount();
+        request.setAttribute("revenue", dao.getCompletedRevenue());
+        request.setAttribute("totalOrders", totalOrders);
+        request.setAttribute("completedOrders", completedOrders);
+        request.setAttribute("completionRate", totalOrders == 0 ? 0 : completedOrders * 100.0 / totalOrders);
+        request.setAttribute("bestSelling", dao.getBestSellingProducts());
         request.getRequestDispatcher("/WEB-INF/views/admin/dashboard.jsp").forward(request, response);
     }
 
